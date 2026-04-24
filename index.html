@@ -271,16 +271,19 @@
         });
     };
 
+  // Função para adicionar fotos padrão (Polaroid, Mini, Instax)
     function addStd(folha, src, mod) {
         const id = 'id'+Math.random().toString(36).substr(2,9);
         const card = document.createElement('div'); card.className = `polaroid f-${mod}`;
-        card.innerHTML = `<div class="foto-box"><img src="${src}" id="${id}"></div>`;
+        card.innerHTML = `<div class="foto-box"><img src="${src}" id="${id}" style="width:100%; height:100%; object-fit:contain;"></div>`;
         card.onclick = () => openEditor(id);
         folha.appendChild(card);
-        photoRegistry[id] = {x:0, y:0, s:1.1, src:src};
+        // Agora inicia com escala 1 (tamanho real da moldura) e sem cortes forçados
+        photoRegistry[id] = {x:0, y:0, s:1.0, src:src};
         updateImg(id);
     }
 
+    // Função para adicionar Trio (Cabine)
     function addTrio(folha, src) {
         const id = 'id'+Math.random().toString(36).substr(2,9);
         let tiras = folha.querySelectorAll('.f-trio');
@@ -294,38 +297,29 @@
             folha.appendChild(ultima);
         }
         const boxVazio = Array.from(ultima.querySelectorAll('.trio-img-box')).find(b => b.innerHTML === '');
-        boxVazio.innerHTML = `<img src="${src}" id="${id}">`;
+        boxVazio.innerHTML = `<img src="${src}" id="${id}" style="width:100%; height:100%; object-fit:cover;">`;
         boxVazio.onclick = (ev) => { ev.stopPropagation(); openEditor(id); };
-        photoRegistry[id] = {x:0, y:0, s:1.5, src:src};
+        // No trio, o objeto fit cover ajuda a iniciar melhor, mas deixamos o zoom manual livre
+        photoRegistry[id] = {x:0, y:0, s:1.0, src:src};
         updateImg(id);
     }
 
-    function updateImg(id) {
-        const img = document.getElementById(id); const st = photoRegistry[id];
-        if(img) img.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) scale(${st.s})`;
-    }
-
-    // EDITOR
+    // Editor com zoom mais flexível
     window.openEditor = (id) => {
-        curId = id; cropState = {...photoRegistry[id]};
-        document.getElementById('crop-img').src = cropState.src;
-        document.getElementById('zoom-ctrl').value = cropState.s;
+        curId = id; 
+        cropState = {...photoRegistry[id]};
+        const cropImg = document.getElementById('crop-img');
+        cropImg.src = cropState.src;
+        
+        // Ajustamos o slider para permitir um zoom bem pequeno (0.1) até o grande (3.0)
+        const zoomCtrl = document.getElementById('zoom-ctrl');
+        zoomCtrl.min = "0.1"; 
+        zoomCtrl.max = "3.0";
+        zoomCtrl.value = cropState.s;
+        
         document.getElementById('editor-modal').style.display = 'flex';
         updateCrop();
     };
-    window.closeEditor = () => document.getElementById('editor-modal').style.display = 'none';
-    window.saveCrop = () => { photoRegistry[curId] = {...cropState}; updateImg(curId); closeEditor(); };
-    
-    function updateCrop() { document.getElementById('crop-img').style.transform = `translate3d(${cropState.x}px, ${cropState.y}px, 0) scale(${cropState.s})`; }
-    
-    document.getElementById('zoom-ctrl').oninput = (e) => { cropState.s = parseFloat(e.target.value); updateCrop(); };
-
-    let isDrag = false, sx, sy;
-    const area = document.getElementById('crop-area');
-    area.onpointerdown = (e) => { isDrag=true; area.setPointerCapture(e.pointerId); sx=e.clientX-cropState.x; sy=e.clientY-cropState.y; };
-    area.onpointermove = (e) => { if(isDrag) { cropState.x=e.clientX-sx; cropState.y=e.clientY-sy; updateCrop(); } };
-    area.onpointerup = () => isDrag=false;
-
     // EXPORT
     window.exportarPDF = async () => {
         const { jsPDF } = window.jspdf; const pdf = new jsPDF('p','mm','a4');
