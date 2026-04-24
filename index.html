@@ -52,12 +52,31 @@
         <div id="p-folhas"></div>
     </div>
 
-    <div id="aba-calc" class="aba">
-        <div class="card">
-            <h2>Precificador Profissional</h2>
-            <p>Módulo em desenvolvimento...</p>
+   <div id="aba-calc" class="aba">
+    <div class="card">
+        <h2>💰 Precificador Profissional</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <label>Custo do Material (R$)</label>
+                <input type="number" id="calc-material" placeholder="Ex: 50.00" style="margin-bottom: 15px;">
+                
+                <label>Tempo de Produção (Minutos)</label>
+                <input type="number" id="calc-tempo" placeholder="Ex: 30" style="margin-bottom: 15px;">
+                
+                <label>Margem de Lucro (%)</label>
+                <input type="number" id="calc-lucro" value="100" style="margin-bottom: 15px;">
+                
+                <button class="btn" onclick="calcularPreco()">CALCULAR PREÇO FINAL</button>
+            </div>
+            
+            <div style="background: var(--bg); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                <span style="font-size: 14px; color: #64748b; font-weight: bold;">PREÇO SUGERIDO</span>
+                <h1 id="res-preco" style="color: var(--primary); font-size: 3rem; margin: 10px 0;">R$ 0,00</h1>
+                <p id="res-detalhe" style="font-size: 12px; color: #94a3b8;"></p>
+            </div>
         </div>
     </div>
+</div>
 
     <div id="aba-pdv" class="aba">
         <div class="card">
