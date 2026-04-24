@@ -48,64 +48,59 @@
             </div>
             <input type="file" id="f-in" multiple hidden>
         </div>
-        
         <div id="p-folhas"></div>
     </div>
 
-   <div id="aba-calc" class="aba">
-    <div class="card">
-        <h2>💰 Precificador Profissional</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-                <label>Custo do Material (R$)</label>
-                <input type="number" id="calc-material" placeholder="Ex: 50.00" style="margin-bottom: 15px;">
-                
-                <label>Tempo de Produção (Minutos)</label>
-                <input type="number" id="calc-tempo" placeholder="Ex: 30" style="margin-bottom: 15px;">
-                
-                <label>Margem de Lucro (%)</label>
-                <input type="number" id="calc-lucro" value="100" style="margin-bottom: 15px;">
-                
-                <button class="btn" onclick="calcularPreco()">CALCULAR PREÇO FINAL</button>
-            </div>
-            
-            <div style="background: var(--bg); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                <span style="font-size: 14px; color: #64748b; font-weight: bold;">PREÇO SUGERIDO</span>
-                <h1 id="res-preco" style="color: var(--primary); font-size: 3rem; margin: 10px 0;">R$ 0,00</h1>
-                <p id="res-detalhe" style="font-size: 12px; color: #94a3b8;"></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-    <<div id="aba-pdv" class="aba">
-    <div class="card">
-        <h2>🧾 Emissor de Recibo Rápido</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
-            <div>
-                <input type="text" id="pdv-cliente" placeholder="Nome do Cliente" style="margin-bottom: 10px;">
-                <div style="display: flex; gap: 5px; margin-bottom: 20px;">
-                    <input type="text" id="pdv-item" placeholder="Produto (Ex: Caneca)">
-                    <input type="number" id="pdv-valor" placeholder="R$" style="width: 100px;">
-                    <button class="btn" onclick="adicionarItem()" style="width: 50px;">+</button>
+    <div id="aba-calc" class="aba">
+        <div class="card">
+            <h2>💰 Precificador Profissional</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label>Custo do Material (R$)</label>
+                    <input type="number" id="calc-material" placeholder="Ex: 50.00" style="margin-bottom: 15px;">
+                    <label>Tempo de Produção (Minutos)</label>
+                    <input type="number" id="calc-tempo" placeholder="Ex: 30" style="margin-bottom: 15px;">
+                    <label>Margem de Lucro (%)</label>
+                    <input type="number" id="calc-lucro" value="100" style="margin-bottom: 15px;">
+                    <button class="btn" onclick="calcularPreco()">CALCULAR PREÇO FINAL</button>
                 </div>
-                <button class="btn" style="background: var(--dark); width: 100%;" onclick="gerarReciboPDF()">📄 GERAR RECIBO PDF</button>
-            </div>
-
-            <div id="recibo-preview" style="background: #fff; border: 1px dashed #ccc; padding: 20px; min-height: 200px;">
-                <h3 style="text-align: center; margin-top: 0;">NOSTÁLGICAS</h3>
-                <p id="preview-cliente" style="font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Cliente: ---</p>
-                <table id="tabela-itens" style="width: 100%; font-size: 13px; text-align: left; border-collapse: collapse;">
-                    <thead><tr style="border-bottom: 1px solid #eee;"><th>Item</th><th>Valor</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-                <div style="margin-top: 15px; text-align: right; font-weight: bold;">
-                    Total: <span id="preview-total">R$ 0,00</span>
+                <div style="background: var(--bg); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                    <span style="font-size: 14px; color: #64748b; font-weight: bold;">PREÇO SUGERIDO</span>
+                    <h1 id="res-preco" style="color: var(--primary); font-size: 3rem; margin: 10px 0;">R$ 0,00</h1>
+                    <p id="res-detalhe" style="font-size: 12px; color: #94a3b8;"></p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div id="aba-pdv" class="aba">
+        <div class="card">
+            <h2>🧾 Emissor de Recibo Rápido</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                <div>
+                    <input type="text" id="pdv-cliente" placeholder="Nome do Cliente" style="margin-bottom: 10px;">
+                    <div style="display: flex; gap: 5px; margin-bottom: 20px;">
+                        <input type="text" id="pdv-item" placeholder="Produto (Ex: Caneca)">
+                        <input type="number" id="pdv-valor" placeholder="R$" style="width: 100px;">
+                        <button class="btn" onclick="adicionarItem()" style="width: 50px;">+</button>
+                    </div>
+                    <button class="btn" style="background: var(--dark); width: 100%;" onclick="gerarReciboPDF()">📄 GERAR RECIBO PDF</button>
+                </div>
+                <div id="recibo-preview" style="background: #fff; border: 1px dashed #ccc; padding: 20px; min-height: 200px;">
+                    <h3 style="text-align: center; margin-top: 0;">NOSTÁLGICAS</h3>
+                    <p id="preview-cliente" style="font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Cliente: ---</p>
+                    <table id="tabela-itens" style="width: 100%; font-size: 13px; text-align: left; border-collapse: collapse;">
+                        <thead><tr style="border-bottom: 1px solid #eee;"><th>Item</th><th>Valor</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <div style="margin-top: 15px; text-align: right; font-weight: bold;">
+                        Total: <span id="preview-total">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
 <div id="editor-modal">
     <div class="modal-content">
@@ -113,10 +108,8 @@
         <div id="crop-area">
             <img src="" id="crop-img">
         </div>
-        
         <label style="font-size: 12px; font-weight: bold; color: #64748b;">ZOOM</label>
         <input type="range" id="zoom-ctrl" min="0.1" max="3" step="0.01" value="0.8">
-        
         <div style="display: flex; gap: 10px;">
             <button class="btn" style="background:#64748b; flex: 1;" onclick="closeEditor()">CANCELAR</button>
             <button class="btn" style="flex: 1;" onclick="saveCrop()">SALVAR AJUSTE</button>
@@ -126,17 +119,16 @@
 
 <script type="module" src="auth.js"></script>
 <script type="module" src="estudio.js"></script>
+<script type="module" src="precificador.js"></script>
+<script type="module" src="pdv.js"></script>
 
 <script>
-    // Lógica simples de troca de abas (mantida aqui para ser rápida)
     function tab(id, el) {
         document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById('aba-' + id).classList.add('ativa');
         el.classList.add('active');
     }
-<script type="module" src="precificador.js"></script>
-<script type="module" src="pdv.js"></script>
 </script>
 
 </body>
