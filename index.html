@@ -73,20 +73,22 @@
                         <input type="number" id="calc-fixo" placeholder="Luz, MEI, etc">
                     </div>
                     <div>
-                    <label>Peças produzidas p/ mês</label>
-                    <input type="number" id="calc-volume" placeholder="Ex: 100" value="100">
+                        <label>Horas de Trabalho/Mês</label>
+                        <input type="number" id="calc-horas-mes" value="160">
+                    </div>
                 </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
                         <label>Taxas Cartão/Plataforma (%)</label>
-                     <div>
-                        <label>Horas de Trabalho/Mês</label>
-                        <input type="number" id="calc-horas-mes" placeholder="Ex: 160" value="160">
-                </div>
-                    <label>Tempo de Produção (HH:MM:SS)</label>
-                    <div style="display: flex; gap: 5px;">
-                        <input type="number" id="t-hh" placeholder="HH" min="0">
-                        <input type="number" id="t-mm" placeholder="MM" min="0" max="59">
-                        <input type="number" id="t-ss" placeholder="SS" min="0" max="59">
+                        <input type="number" id="calc-taxa" placeholder="Ex: 5">
+                    </div>
+                    <div>
+                        <label>Tempo de Produção</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="number" id="t-hh" placeholder="HH" value="0">
+                            <input type="number" id="t-mm" placeholder="MM" value="0">
+                        </div>
                     </div>
                 </div>
 
