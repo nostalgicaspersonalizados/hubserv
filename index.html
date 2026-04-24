@@ -52,26 +52,71 @@
     </div>
 
     <div id="aba-calc" class="aba">
-        <div class="card">
-            <h2>💰 Precificador Profissional</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div>
-                    <label>Custo do Material (R$)</label>
-                    <input type="number" id="calc-material" placeholder="Ex: 50.00" style="margin-bottom: 15px;">
-                    <label>Tempo de Produção (Minutos)</label>
-                    <input type="number" id="calc-tempo" placeholder="Ex: 30" style="margin-bottom: 15px;">
-                    <label>Margem de Lucro (%)</label>
-                    <input type="number" id="calc-lucro" value="100" style="margin-bottom: 15px;">
-                    <button class="btn" onclick="calcularPreco()">CALCULAR PREÇO FINAL</button>
+    <div class="card">
+        <h2>💰 Calculadora de Custos Profissional</h2>
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px;">
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                
+                <div id="materiais-lista">
+                    <label><strong>Materiais / Insumos</strong></label>
+                    <div class="material-row" style="display: flex; gap: 5px; margin-bottom: 8px;">
+                        <input type="text" placeholder="Item (Ex: Papel Fotográfico)" class="mat-nome">
+                        <input type="number" placeholder="R$" class="mat-valor" style="width: 100px;">
+                        <button class="btn" onclick="addMaterialField()" style="width: 40px; background: var(--dark)">+</button>
+                    </div>
                 </div>
-                <div style="background: var(--bg); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                    <span style="font-size: 14px; color: #64748b; font-weight: bold;">PREÇO SUGERIDO</span>
-                    <h1 id="res-preco" style="color: var(--primary); font-size: 3rem; margin: 10px 0;">R$ 0,00</h1>
-                    <p id="res-detalhe" style="font-size: 12px; color: #94a3b8;"></p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>Custos Fixos (R$)</label>
+                        <input type="number" id="calc-fixo" placeholder="Luz, MEI, etc">
+                    </div>
+                    <div>
+                        <label>Taxas Cartão/Plataforma (%)</label>
+                        <input type="number" id="calc-taxa" placeholder="Ex: 5">
+                    </div>
+                </div>
+
+                <div>
+                    <label>Tempo de Produção (HH:MM:SS)</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="number" id="t-hh" placeholder="HH" min="0">
+                        <input type="number" id="t-mm" placeholder="MM" min="0" max="59">
+                        <input type="number" id="t-ss" placeholder="SS" min="0" max="59">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>Margem de Lucro (%)</label>
+                        <input type="number" id="calc-margem" value="100">
+                    </div>
+                    <div>
+                        <label>Lucro Desejado (R$)</label>
+                        <input type="number" id="calc-lucro-rs" placeholder="Opcional">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" onclick="processarCalculo()" style="flex: 2;">CALCULAR PREÇO FINAL</button>
+                    <button class="btn" onclick="copiarCalculo()" style="flex: 1; background: var(--dark);">📋 COPIAR</button>
                 </div>
             </div>
+
+            <div id="resultado-box" style="background: var(--bg); padding: 25px; border-radius: 15px; border: 2px dashed #cbd5e1;">
+                <h3 style="margin-top: 0;">Resumo do Cálculo</h3>
+                <div id="detalhes-final" style="font-size: 14px; line-height: 1.6; color: #475569;">
+                    Aguardando dados...
+                </div>
+                <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 15px 0;">
+                <span style="font-size: 12px; font-weight: bold; color: #64748b;">VALOR SUGERIDO DE VENDA</span>
+                <h1 id="preco-venda-final" style="color: var(--primary); font-size: 2.5rem; margin: 5px 0;">R$ 0,00</h1>
+            </div>
+
         </div>
     </div>
+</div>
 
     <div id="aba-pdv" class="aba">
         <div class="card">
