@@ -189,26 +189,71 @@
             r.readAsDataURL(file);
         });
     }
-
-    function setupImg(img, id) {
+function setupImg(img, id) {
         STATE.fotos[id] = { x: 0, y: 0, s: 1.1, r: 0 };
         const box = img.parentElement;
-        
-        // Touch para Celular
-        let startDist = 0;
-        box.ontouchstart = (e) => {
-            if(e.touches.length === 2) startDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
-            const t = e.touches[0]; box.startX = t.pageX - STATE.fotos[id].x; box.startY = t.pageY - STATE.fotos[id].y;
-        };
-        box.ontouchmove = (e) => {
-            e.preventDefault();
-            if(e.touches.length === 2) {
-                const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
-                STATE.fotos[id].s *= dist/startDist; startDist = dist;
+
+        // Desativa o comportamento padrão do navegador (rolagem) sobre a foto
+        box.style.touchAction = 'none';
+
+        let isDragging = false;
+        let startX, startY;
+        let initialDist = 0;
+
+        // Suporte para Mouse e Dedo (Pointer Events)
+        box.onpointerdown = (e) => {
+            isDragging = true;
+            box.setPointerCapture(e.pointerId); // Prende o toque aqui
+            
+            // Se for dois dedos (zoom)
+            if (e.pointerType === 'touch') {
+                startX = e.clientX - STATE.fotos[id].x;
+                startY = e.clientY - STATE.fotos[id].y;
             } else {
-                const t = e.touches[0]; STATE.fotos[id].x = t.pageX - box.startX; STATE.fotos[id].y = t.pageY - box.startY;
+                startX = e.clientX - STATE.fotos[id].x;
+                startY = e.clientY - STATE.fotos[id].y;
             }
-            img.style.transform = `translate(${STATE.fotos[id].x}px, ${STATE.fotos[id].y}px) scale(${STATE.fotos[id].s})`;
+        };
+
+        box.onpointermove = (e) => {
+            if (!isDragging) return;
+
+            // Movimento simples
+            STATE.fotos[id].x = e.clientX - startX;
+            STATE.fotos[id].y = e.clientY - startY;
+            
+            apply(img, id);
+        };
+
+        box.onpointerup = (e) => {
+            isDragging = false;
+            box.releasePointerCapture(e.pointerId);
+        };
+
+        // Scroll do mouse para Zoom no PC
+        box.onwheel = (e) => {
+            e.preventDefault();
+            STATE.fotos[id].s += e.deltaY > 0 ? -0.05 : 0.05;
+            if(STATE.fotos[id].s < 0.2) STATE.fotos[id].s = 0.2; // Limite mínimo
+            apply(img, id);
+        };
+        
+        // Adicionando um botão de zoom para celular (opcional, mas ajuda muito)
+        const zoomBtn = document.createElement('button');
+        zoomBtn.innerText = "+";
+        zoomBtn.style = "position:absolute; bottom:5px; right:5px; z-index:60; background:#000; color:#fff; border-radius:5px; border:none; width:25px; height:25px; opacity:0.5";
+        zoomBtn.onclick = (e) => {
+            e.stopPropagation();
+            STATE.fotos[id].s += 0.1;
+            apply(img, id);
+        };
+        box.appendChild(zoomBtn);
+    }
+
+    function apply(img, id) {
+        // Usa hardware acceleration (translate3d) para não travar no celular
+        img.style.transform = `translate3d(${STATE.fotos[id].x}px, ${STATE.fotos[id].y}px, 0) scale(${STATE.fotos[id].s}) rotate(${STATE.fotos[id].r}deg)`;
+    };
         };
     }
 
