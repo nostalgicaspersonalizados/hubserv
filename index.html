@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nostálgicas Hub - SaaS Pro</title>
+    <title>Nostálgicas Hub Pro - SaaS</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -11,50 +11,65 @@
 
     <style>
         :root { --primary: #e11d48; --dark: #0f172a; --accent: #fbbf24; --bg: #f1f5f9; }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { margin: 0; display: flex; height: 100vh; background: var(--bg); overflow: hidden; }
-        .sidebar { width: 220px; background: var(--dark); color: white; display: flex; flex-direction: column; padding: 20px 0; }
+
+        /* Sidebar */
+        .sidebar { width: 240px; background: var(--dark); color: white; display: flex; flex-direction: column; padding: 20px 0; }
         .logo { padding: 0 20px 30px; font-weight: 900; font-size: 1.2rem; color: var(--accent); border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
         .nav-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; border: none; background: none; color: #94a3b8; width: 100%; text-align: left; }
         .nav-item.active { background: var(--primary); color: white; }
+
+        /* Conteúdo */
         .main { flex: 1; overflow-y: auto; padding: 30px; }
         .aba { display: none; max-width: 1100px; margin: auto; }
         .aba.ativa { display: block; }
         .card { background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 10px; background: #f8fafc; margin-bottom: 10px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; display: flex; justify-content: center; gap: 10px; }
         
-        /* Estilo Login */
-        #auth-screen { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        
-        /* Estilo Fotos (Preservado) */
-        .folha-a4 { width: 210mm; height: 297mm; background: #fff; padding: 10mm; display: grid; gap: 4mm; box-shadow: 0 0 30px rgba(0,0,0,0.1); margin: auto; }
-        .polaroid { border: 0.1mm solid #eee; position: relative; background: #fff; }
-        .foto-box { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; }
-        .foto-box img { position: absolute; transform-origin: center; cursor: move; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 6px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 10px; background: #f8fafc; font-size: 14px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px; }
+
+        /* Estúdio de Fotos */
+        .folha-a4 { width: 210mm; height: 297mm; background: #fff; padding: 10mm; display: grid; gap: 4mm; box-shadow: 0 0 30px rgba(0,0,0,0.1); margin: 20px auto; }
+        .polaroid { border: 0.1mm solid #eee; position: relative; background: #fff; overflow: visible; }
+        .foto-box { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; touch-action: none; }
+        .foto-box img { position: absolute; transform-origin: center; cursor: move; will-change: transform; }
+
         .f-padrao { width: 95mm; height: 100mm; padding: 5mm 5mm 15mm 5mm; }
+        .f-mini { width: 70mm; height: 90mm; padding: 4mm 4mm 12mm 4mm; }
+        .f-instax { width: 55mm; height: 80mm; padding: 3mm 3mm 10mm 3mm; }
+        .f-trio { width: 50mm; height: 150mm; padding: 5mm; display: flex; flex-direction: column; gap: 3mm; } /* Cabine Vertical */
+        .trio-img-box { width: 100%; height: 40mm; overflow: hidden; position: relative; background: #000; }
+
+        .g-padrao { grid-template-columns: repeat(2, 95mm); }
+        .g-mini { grid-template-columns: repeat(2, 70mm); }
+        .g-instax { grid-template-columns: repeat(3, 55mm); }
+        .g-trio { grid-template-columns: repeat(3, 50mm); }
+
+        #auth-screen { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
 <div id="auth-screen">
-    <div class="card" style="width: 350px;">
-        <center><h2 style="border:none">Nostálgicas Login</h2></center>
-        <input type="email" id="auth-email" placeholder="Seu e-mail">
-        <input type="password" id="auth-senha" placeholder="Sua senha">
+    <div class="card" style="width: 350px; text-align: center;">
+        <h2 style="margin-bottom:20px;">Nostálgicas Hub</h2>
+        <input type="email" id="auth-email" placeholder="E-mail">
+        <input type="password" id="auth-senha" placeholder="Senha">
         <button class="btn" onclick="handleAuth('login')">ENTRAR</button>
-        <button class="btn" style="background:none; color:var(--dark); font-size:12px; margin-top:10px;" onclick="handleAuth('signup')">Criar nova conta</button>
-        <p id="auth-msg" style="color:red; font-size:12px; margin-top:10px; text-align:center;"></p>
+        <button class="btn" style="background:none; color:#64748b; margin-top:10px;" onclick="handleAuth('signup')">Criar Conta Grátis</button>
+        <p id="auth-msg" style="color:red; font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
 
 <aside class="sidebar">
     <div class="logo">NOSTÁLGICAS HUB</div>
     <button class="nav-item active" onclick="tab('calc', this)">💰 Precificador</button>
-    <button class="nav-item" onclick="tab('prod', this)">🖨️ Fotos</button>
-    <button class="nav-item" onclick="tab('pdv', this)">🧾 PDV</button>
-    <button class="nav-item" onclick="logout()" style="margin-top:auto; color: #f87171;">🚪 Sair</button>
+    <button class="nav-item" onclick="tab('prod', this)">🖨️ Estúdio de Fotos</button>
+    <button class="nav-item" onclick="tab('pdv', this)">🧾 PDV / Recibo</button>
+    <button class="nav-item" onclick="logout()" style="margin-top:auto; color:#f87171;">🚪 Sair</button>
 </aside>
 
 <main class="main">
@@ -63,34 +78,67 @@
             <h2>Calculadora de Custos</h2>
             <div class="grid">
                 <div><label>Fixo Mensal</label><input type="number" id="c-fixo" value="500"></div>
-                <div><label>Salário</label><input type="number" id="c-salario" value="3000"></div>
+                <div><label>Salário Pretendido</label><input type="number" id="c-salario" value="3000"></div>
                 <div><label>Tempo (HH:MM:SS)</label><input type="text" id="c-tempo" value="00:15:00"></div>
             </div>
-            <div style="background:var(--dark); color:white; padding:20px; border-radius:15px; margin-top:20px; text-align:center;">
-                <div id="res-venda" style="font-size:2rem; font-weight:900; color:var(--accent);">R$ 0,00</div>
+            <div id="materiais-area">
+                <label>Itens / Insumos (R$)</label>
+                <div style="display:flex; gap:10px; margin-bottom:8px;">
+                    <input type="text" placeholder="Papel, tinta..." style="flex:3">
+                    <input type="number" class="mat-v" value="0.85" style="flex:1">
+                    <button onclick="this.parentElement.remove(); runCalc()" style="border:none; color:red; background:none; cursor:pointer;">✕</button>
+                </div>
+            </div>
+            <button class="btn" onclick="addMat()" style="background:#64748b; font-size:12px; width:auto; padding:8px 15px;">+ Adicionar Item</button>
+            <div class="grid" style="margin-top:20px;">
+                <div><label>Lucro %</label><input type="number" id="c-lucro" value="100"></div>
+                <div><label>Taxas %</label><input type="number" id="c-taxa" value="0"></div>
+            </div>
+            <div style="background:var(--dark); color:white; padding:30px; border-radius:15px; text-align:center;">
+                <div id="res-venda" style="font-size:2.5rem; font-weight:900; color:var(--accent);">R$ 0,00</div>
+                <small>Sugestão de Venda</small>
             </div>
         </div>
+    </div>
+
+    <div id="aba-prod" class="aba">
+        <div class="card">
+            <h2>Estúdio de Montagem</h2>
+            <div class="grid" style="align-items: flex-end;">
+                <div><label>Modelo</label>
+                    <select id="p-modelo" onchange="limparEstudio()">
+                        <option value="padrao">Polaroid Padrão (9,5x10)</option>
+                        <option value="mini">Mini (7x9)</option>
+                        <option value="instax">Instax (5,5x8)</option>
+                        <option value="trio">Trio Cabine (5x15 - Vertical)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="document.getElementById('f-in').click()">📂 Subir Fotos</button>
+                <button class="btn" style="background:var(--dark)" onclick="exportarPDF()">📄 Exportar PDF</button>
+            </div>
+            <input type="file" id="f-in" multiple hidden onchange="handleFiles(this)">
+        </div>
+        <div id="p-folhas"></div>
     </div>
 
     <div id="aba-pdv" class="aba">
         <div class="card">
             <h2>Ponto de Venda</h2>
-            <label>Sua Loja</label>
             <div class="grid">
-                <input type="text" id="loja-nome" placeholder="Nome">
-                <input type="text" id="loja-whats" placeholder="Whats">
+                <input type="text" id="loja-nome" placeholder="Nome da Loja">
+                <input type="text" id="loja-whats" placeholder="WhatsApp">
+                <input type="text" id="loja-insta" placeholder="Instagram">
             </div>
+            <hr style="opacity:0.1; margin:20px 0;">
+            <div class="grid">
+                <input type="text" id="pdv-cliente" placeholder="Nome do Cliente" style="grid-column: span 2">
+                <input type="text" id="pdv-prod" placeholder="Produto">
+                <input type="number" id="pdv-val" placeholder="Valor R$">
+                <input type="number" id="pdv-qtd" value="1">
+            </div>
+            <textarea id="pdv-obs" placeholder="Observações do pedido..."></textarea>
             <button class="btn" style="background:#059669" onclick="printRecibo()">🖨️ Gerar Recibo</button>
         </div>
-    </div>
-    
-    <div id="aba-prod" class="aba">
-        <div class="card">
-            <h2>Estúdio</h2>
-            <button class="btn" onclick="document.getElementById('f-in').click()">📂 Subir Fotos</button>
-            <input type="file" id="f-in" multiple hidden onchange="handleFiles(this)">
-        </div>
-        <div id="p-folhas"></div>
     </div>
 </main>
 
@@ -112,66 +160,141 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
+    let currentUser = null;
 
-    // LOGIN E CADASTRO
+    // --- AUTH ---
     window.handleAuth = (mode) => {
-        const email = document.getElementById('auth-email').value;
-        const senha = document.getElementById('auth-senha').value;
-        const msg = document.getElementById('auth-msg');
-
-        if(mode === 'login') {
-            signInWithEmailAndPassword(auth, email, senha).catch(e => msg.innerText = "Erro no login!");
-        } else {
-            createUserWithEmailAndPassword(auth, email, senha).catch(e => msg.innerText = "Erro ao cadastrar!");
-        }
+        const e = document.getElementById('auth-email').value, s = document.getElementById('auth-senha').value;
+        if(mode === 'login') signInWithEmailAndPassword(auth, e, s).catch(err => document.getElementById('auth-msg').innerText = "Erro no Login");
+        else createUserWithEmailAndPassword(auth, e, s).catch(err => document.getElementById('auth-msg').innerText = "Erro ao Cadastrar");
     };
-
     window.logout = () => signOut(auth);
 
-    // MONITOR DE USUÁRIO
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById('auth-screen').style.display = 'none';
-            syncData(user.uid);
-        } else {
-            document.getElementById('auth-screen').style.display = 'flex';
-        }
+    onAuthStateChanged(auth, user => {
+        if(user) { currentUser = user; document.getElementById('auth-screen').style.display = 'none'; syncLoad(user.uid); }
+        else { document.getElementById('auth-screen').style.display = 'flex'; }
     });
 
-    // SINCRONIZAÇÃO EM NUVEM
-    function syncData(uid) {
-        const userRef = ref(db, 'users/' + uid);
-        
-        // Carrega da Nuvem
-        onValue(userRef, (snapshot) => {
-            const data = snapshot.val();
-            if(data) {
-                document.getElementById('c-fixo').value = data.fixo || 500;
-                document.getElementById('loja-nome').value = data.lojaNome || "";
-                // Adicione os outros campos aqui...
-            }
-        });
-
-        // Salva na Nuvem (sempre que mudar algo)
-        document.querySelectorAll('input').forEach(i => {
-            i.addEventListener('change', () => {
-                set(userRef, {
-                    fixo: document.getElementById('c-fixo').value,
-                    lojaNome: document.getElementById('loja-nome').value
-                    // Adicione os outros campos aqui...
-                });
-            });
+    // --- SYNC & CALC ---
+    function syncLoad(uid) {
+        onValue(ref(db, 'users/' + uid), snap => {
+            const d = snap.val(); if(!d) return;
+            document.getElementById('c-fixo').value = d.fixo || 500;
+            document.getElementById('c-salario').value = d.salario || 3000;
+            document.getElementById('c-tempo').value = d.tempo || "00:15:00";
+            document.getElementById('c-lucro').value = d.lucro || 100;
+            document.getElementById('c-taxa').value = d.taxa || 0;
+            document.getElementById('loja-nome').value = d.lojaNome || "";
+            document.getElementById('loja-whats').value = d.lojaWhats || "";
+            document.getElementById('loja-insta').value = d.lojaInsta || "";
+            runCalc();
         });
     }
 
-    // Funções de Interface (Tabs)
+    window.runCalc = () => {
+        const fixo = parseFloat(document.getElementById('c-fixo').value) || 0;
+        const meta = parseFloat(document.getElementById('c-salario').value) || 0;
+        const t = document.getElementById('c-tempo').value.split(':').map(Number);
+        const seg = (t[0]*3600) + (t[1]*60) + (t[2]||0);
+        let mat = 0; document.querySelectorAll('.mat-v').forEach(i => mat += parseFloat(i.value)||0);
+        const lucro = parseFloat(document.getElementById('c-lucro').value)/100, taxa = parseFloat(document.getElementById('c-taxa').value)/100;
+        const vh = (fixo + meta) / 160;
+        const custo = mat + ((seg/3600)*vh);
+        let venda = custo * (1+lucro); if(taxa > 0) venda = venda / (1-taxa);
+        document.getElementById('res-venda').innerText = venda.toLocaleString('pt-br',{style:'currency', currency:'BRL'});
+        
+        if(currentUser) set(ref(db, 'users/'+currentUser.uid), {
+            fixo, salario: meta, tempo: document.getElementById('c-tempo').value,
+            lucro: document.getElementById('c-lucro').value, taxa: document.getElementById('c-taxa').value,
+            lojaNome: document.getElementById('loja-nome').value, lojaWhats: document.getElementById('loja-whats').value,
+            lojaInsta: document.getElementById('loja-insta').value
+        });
+    };
+    document.querySelectorAll('input').forEach(i => i.addEventListener('change', runCalc));
+
+    // --- FOTOS ---
+    let F_DATA = {};
+    window.handleFiles = (input) => {
+        const mod = document.getElementById('p-modelo').value;
+        const lim = { padrao: 4, mini: 6, instax: 9, trio: 3 }[mod];
+        const files = Array.from(input.files);
+        
+        for(let i=0; i < files.length; i += lim) {
+            const folha = document.createElement('div');
+            folha.className = `folha-a4 g-${mod}`;
+            document.getElementById('p-folhas').appendChild(folha);
+            files.slice(i, i+lim).forEach(file => {
+                const r = new FileReader();
+                r.onload = (e) => addPhoto(folha, e.target.result, mod);
+                r.readAsDataURL(file);
+            });
+        }
+    };
+
+    function addPhoto(folha, src, mod) {
+        const id = 'img_'+Math.random().toString(36).substr(2,9);
+        const card = document.createElement('div'); card.className = `polaroid f-${mod}`;
+        if(mod === 'trio') {
+            card.innerHTML = `<div class="trio-img-box"><img src="${src}" id="${id}_1"></div>
+                              <div class="trio-img-box"><div style="background:#eee; height:100%"></div></div>
+                              <div class="trio-img-box"><div style="background:#eee; height:100%"></div></div>`;
+        } else {
+            card.innerHTML = `<div class="foto-box"><img src="${src}" id="${id}"></div>`;
+        }
+        folha.appendChild(card);
+        if(mod === 'trio') setupImg(card.querySelector('img'), id+'_1');
+        else setupImg(card.querySelector('img'), id);
+    }
+
+    function setupImg(img, id) {
+        F_DATA[id] = { x:0, y:0, s:1.1, r:0 };
+        const box = img.parentElement; box.style.touchAction = 'none';
+        let active = false, startX, startY;
+        box.onpointerdown = (e) => { active = true; box.setPointerCapture(e.pointerId); startX = e.clientX - F_DATA[id].x; startY = e.clientY - F_DATA[id].y; };
+        box.onpointermove = (e) => { if(!active) return; F_DATA[id].x = e.clientX - startX; F_DATA[id].y = e.clientY - startY; up(img, id); };
+        box.onpointerup = () => active = false;
+        box.onwheel = (e) => { e.preventDefault(); F_DATA[id].s += e.deltaY > 0 ? -0.1 : 0.1; up(img, id); };
+    }
+    function up(img, id) { img.style.transform = `translate3d(${F_DATA[id].x}px, ${F_DATA[id].y}px,0) scale(${F_DATA[id].s})`; }
+    window.limparEstudio = () => document.getElementById('p-folhas').innerHTML = '';
+
+    window.exportarPDF = async () => {
+        const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4');
+        const folhas = document.querySelectorAll('.folha-a4');
+        for (let i = 0; i < folhas.length; i++) {
+            if (i > 0) pdf.addPage();
+            const canvas = await html2canvas(folhas[i], { scale: 2 });
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+        }
+        pdf.save('Nostalgicas_Producao.pdf');
+    };
+
+    // --- PDV ---
+    window.printRecibo = () => {
+        const loja = document.getElementById('loja-nome').value;
+        const cli = document.getElementById('pdv-cliente').value || "Cliente";
+        const val = parseFloat(document.getElementById('pdv-val').value) || 0;
+        const qtd = parseInt(document.getElementById('pdv-qtd').value) || 1;
+        const div = document.createElement('div');
+        div.style = "position:fixed; top:0; left:0; width:80mm; background:#fff; padding:20px; font-family:monospace; z-index:20000; font-size:12px;";
+        div.innerHTML = `<center><strong>${loja}</strong><br>${document.getElementById('loja-whats').value}<hr></center>
+                         <p>CLIENTE: ${cli.toUpperCase()}<br>PRODUTO: ${document.getElementById('pdv-prod').value}</p>
+                         <p>TOTAL: R$ ${(val*qtd).toFixed(2)}</p><hr>
+                         <center>RECIBO SEM VALOR FISCAL</center>`;
+        document.body.appendChild(div); window.print(); document.body.removeChild(div);
+    };
+
     window.tab = (id, el) => {
         document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById('aba-' + id).classList.add('ativa');
         el.classList.add('active');
     };
+    window.addMat = () => {
+        const d = document.createElement('div'); d.style="display:flex; gap:10px; margin-bottom:8px;";
+        d.innerHTML = `<input type="text" style="flex:3"><input type="number" class="mat-v" value="0" style="flex:1"><button onclick="this.parentElement.remove(); runCalc()" style="border:none; color:red; background:none; cursor:pointer;">✕</button>`;
+        document.getElementById('materiais-area').appendChild(d);
+    };
 </script>
-
 </body>
 </html>
