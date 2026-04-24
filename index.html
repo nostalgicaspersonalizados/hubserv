@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nostálgicas Hub Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -11,220 +11,132 @@
 
     <style>
         :root { --primary: #e11d48; --dark: #0f172a; --accent: #fbbf24; --bg: #f1f5f9; }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; font-family: 'Inter', sans-serif; touch-action: manipulation; }
         
-        body { margin: 0; display: flex; height: 100vh; background: var(--bg); overflow: hidden; }
+        body { margin: 0; display: flex; flex-direction: column; height: 100vh; background: var(--bg); overflow: hidden; }
 
-        /* Navegação */
-        .sidebar { width: 70px; background: var(--dark); display: flex; flex-direction: column; align-items: center; padding-top: 20px; transition: 0.3s; z-index: 1000; }
-        .sidebar:hover { width: 200px; }
-        .nav-item { color: #94a3b8; padding: 18px; cursor: pointer; width: 100%; border: none; background: none; display: flex; align-items: center; gap: 20px; transition: 0.2s; }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        /* Navegação Adaptável (Sidebar no PC, Bottom bar no Celular) */
+        .sidebar { background: var(--dark); display: flex; z-index: 1000; }
+        
+        @media (min-width: 768px) {
+            body { flex-direction: row; }
+            .sidebar { width: 70px; flex-direction: column; height: 100vh; transition: 0.3s; }
+            .sidebar:hover { width: 200px; }
+            .nav-item { flex-direction: row; padding: 20px; width: 100%; }
+        }
+
+        @media (max-width: 767px) {
+            .sidebar { width: 100%; height: 65px; flex-direction: row; justify-content: space-around; order: 2; }
+            .nav-item { flex-direction: column; font-size: 10px; padding: 10px; flex: 1; }
+            .nav-item span { opacity: 1 !important; margin-top: 4px; }
+        }
+
+        .nav-item { color: #94a3b8; cursor: pointer; border: none; background: none; display: flex; align-items: center; gap: 15px; transition: 0.2s; text-align: center; }
+        .nav-item:hover { color: #fff; }
         .nav-item.active { background: var(--primary); color: #fff; }
         .nav-item span { opacity: 0; white-space: nowrap; font-weight: 600; }
         .sidebar:hover span { opacity: 1; }
 
         /* Área Principal */
-        .main { flex: 1; overflow-y: auto; padding: 25px; scroll-behavior: smooth; }
-        .aba { display: none; max-width: 1200px; margin: auto; animation: fadeIn 0.3s ease; }
+        .main { flex: 1; overflow-y: auto; padding: 15px; height: 100%; }
+        .aba { display: none; max-width: 100%; margin: auto; animation: fadeIn 0.2s ease; }
         .aba.ativa { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* UI Pro */
-        .card { background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        h2 { margin-top: 0; font-weight: 900; color: var(--dark); font-size: 1.5rem; }
+        /* Cards e UI */
+        .card { background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 10px; background: #f8fafc; font-size: 16px; /* Evita zoom no iPhone */ }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
-        .field { display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 15px; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
+
+        /* Estúdio (Mobile Friendly) */
+        #p-folhas { overflow-x: auto; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        .folha-a4 { min-width: 210mm; width: 210mm; height: 297mm; background: #fff; padding: 10mm; display: grid; gap: 4mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); margin-bottom: 20px; transform: scale(0.4); transform-origin: top center; }
         
-        input, select { 
-            width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 10px; 
-            background: #f8fafc; transition: 0.2s; font-size: 14px;
-        }
-        input:focus { border-color: var(--primary); outline: none; background: #fff; }
+        /* Ajuste de escala para ver a folha no celular */
+        @media (max-width: 767px) { .folha-a4 { transform: scale(0.35); margin-bottom: -180mm; } }
 
-        .btn { 
-            background: var(--primary); color: white; border: none; padding: 14px 24px; border-radius: 10px; 
-            cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; transition: 0.2s;
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(225, 29, 72, 0.3); }
+        .mini-polaroid { border: 0.1mm solid #eee; position: relative; background: #fff; }
+        .foto-box { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; touch-action: none; }
+        .foto-box img { position: absolute; transform-origin: center; cursor: move; }
 
-        /* Estúdio */
-        #p-folhas { display: flex; flex-direction: column; align-items: center; gap: 30px; }
-        .folha-a4 { width: 210mm; height: 297mm; background: #fff; padding: 10mm; display: grid; gap: 4mm; box-shadow: 0 0 30px rgba(0,0,0,0.1); position: relative; }
-        .mini-polaroid { border: 0.2mm solid #f1f5f9; position: relative; overflow: visible; background: #fff; }
-        .foto-box { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; }
-        .foto-box img { position: absolute; transform-origin: center; cursor: move; user-select: none; }
-        
-        .btn-girar { 
-            position: absolute; top: -10px; right: -10px; z-index: 50; 
-            background: var(--dark); color: #fff; border-radius: 50%; width: 28px; height: 28px;
-            border: 2px solid #fff; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Formatos */
-        .f-padrao { width: 95mm; height: 105mm; padding: 5mm 5mm 15mm 5mm; }
-        .f-mini { width: 70mm; height: 90mm; padding: 4mm 4mm 12mm 4mm; }
-        .f-instax { width: 55mm; height: 80mm; padding: 3mm 3mm 10mm 3mm; }
-        .f-padrao-grid { grid-template-columns: repeat(2, 95mm); }
-        .f-mini-grid { grid-template-columns: repeat(2, 70mm); }
-        .f-instax-grid { grid-template-columns: repeat(3, 55mm); }
-
-        /* Impressão Recibo */
-        @media print {
-            body * { display: none !important; }
-            #area-recibo, #area-recibo * { display: block !important; }
-            #area-recibo { position: absolute; left: 0; top: 0; width: 80mm; }
-        }
+        /* PDV Mobile */
+        .pdv-layout { display: flex; flex-direction: column; gap: 15px; }
+        @media (min-width: 992px) { .pdv-layout { flex-direction: row; } .pdv-lista { flex: 1.5; } .pdv-resumo { flex: 1; } }
     </style>
 </head>
 <body>
 
 <nav class="sidebar">
-    <div class="nav-item active" onclick="tab('calc', this)">💰 <span>Precificador</span></div>
+    <div class="nav-item active" onclick="tab('calc', this)">💰 <span>Precificar</span></div>
     <div class="nav-item" onclick="tab('prod', this)">🖨️ <span>Produção</span></div>
-    <div class="nav-item" onclick="tab('pdv', this)">🧾 <span>PDV / Recibo</span></div>
+    <div class="nav-item" onclick="tab('pdv', this)">🧾 <span>PDV</span></div>
 </nav>
 
 <main class="main">
     <div id="aba-calc" class="aba ativa">
-    <div class="card">
-        <h2>💰 Inteligência de Preços</h2>
-        
-        <div class="grid">
-            <div class="field"><label>Custos Fixos Mensais</label><input type="number" id="c-fixo" value="500" oninput="runCalc()"></div>
-            <div class="field"><label>Meta Pró-Labore</label><input type="number" id="c-meta" value="3000" oninput="runCalc()"></div>
-            <div class="field"><label>Horas Úteis/Mês</label><input type="number" id="c-hrs" value="160" oninput="runCalc()"></div>
-        </div>
-
-        <div class="section" style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-            <label style="margin-bottom: 15px; display: block;">Materiais e Insumos (por unidade)</label>
-            <div id="lista-materiais">
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="text" placeholder="Ex: Papel Fotográfico" style="flex: 2;">
-                    <input type="number" class="mat-custo" value="0.85" oninput="runCalc()" style="flex: 1;" placeholder="R$">
-                    <button onclick="this.parentElement.remove(); runCalc()" style="background:none; border:none; color:red; cursor:pointer;">✕</button>
+        <div class="card">
+            <h2>💰 Precificador</h2>
+            <div class="grid">
+                <div><label>Fixo Mensal</label><input type="number" id="c-fixo" value="500" oninput="runCalc()"></div>
+                <div><label>Meta Salário</label><input type="number" id="c-meta" value="3000" oninput="runCalc()"></div>
+            </div>
+            
+            <div id="lista-materiais" style="margin: 15px 0;">
+                <label>Materiais (Unidade)</label>
+                <div style="display:flex; gap:5px; margin-top:5px;">
+                    <input type="text" placeholder="Item" style="flex:2">
+                    <input type="number" class="mat-custo" value="0.85" oninput="runCalc()" style="flex:1">
                 </div>
             </div>
-            <button class="btn" onclick="addMaterialField()" style="padding: 8px 15px; font-size: 12px; background: #64748b;">+ Adicionar Material</button>
-        </div>
+            <button class="btn" onclick="addMat()" style="background:#64748b; margin-bottom:15px;">+ Material</button>
 
-        <div class="grid">
-            <div class="field"><label>Minutos de Produção</label><input type="number" id="c-tempo" value="15" oninput="runCalc()"></div>
-            <div class="field"><label>Margem de Lucro %</label><input type="number" id="c-lucro" value="100" oninput="runCalc()"></div>
-            <div class="field"><label>Taxas/Cartão %</label><input type="number" id="c-taxa" value="0" oninput="runCalc()"></div>
-        </div>
-
-        <div style="background: var(--dark); padding: 30px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; color: #fff;">
-            <div>
-                <div id="res-venda" style="font-size: 2.5rem; font-weight: 900; color: var(--accent);">R$ 0,00</div>
-                <span style="opacity: 0.6; font-size: 12px; text-transform: uppercase;">Preço de Venda Sugerido</span>
+            <div class="grid">
+                <div><label>Minutos</label><input type="number" id="c-tempo" value="15" oninput="runCalc()"></div>
+                <div><label>Lucro %</label><input type="number" id="c-lucro" value="100" oninput="runCalc()"></div>
             </div>
-            <div style="text-align: right;">
-                <div id="res-custo" style="font-size: 1.2rem; font-weight: 600;">R$ 0,00</div>
-                <span style="opacity: 0.6; font-size: 12px;">Custo Total da Peça</span>
+
+            <div style="background: var(--dark); padding: 20px; border-radius: 12px; color: #fff; text-align: center;">
+                <small style="opacity:0.7">PREÇO DE VENDA</small>
+                <div id="res-venda" style="font-size: 2rem; font-weight: 900; color: var(--accent);">R$ 0,00</div>
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    // --- FUNÇÕES DO NOVO PRECIFICADOR ---
-    
-    function addMaterialField() {
-        const container = document.getElementById('lista-materiais');
-        const div = document.createElement('div');
-        div.style = "display: flex; gap: 10px; margin-bottom: 10px;";
-        div.innerHTML = `
-            <input type="text" placeholder="Novo material" style="flex: 2;">
-            <input type="number" class="mat-custo" value="0" oninput="runCalc()" style="flex: 1;" placeholder="R$">
-            <button onclick="this.parentElement.remove(); runCalc()" style="background:none; border:none; color:red; cursor:pointer;">✕</button>
-        `;
-        container.appendChild(div);
-    }
-
-    function runCalc() {
-        // Custos Estruturais
-        const f = parseFloat(document.getElementById('c-fixo').value) || 0;
-        const m = parseFloat(document.getElementById('c-meta').value) || 0;
-        const h = parseFloat(document.getElementById('c-hrs').value) || 1;
-        
-        // Soma de todos os materiais na lista
-        let totalMat = 0;
-        document.querySelectorAll('.mat-custo').forEach(input => {
-            totalMat += parseFloat(input.value) || 0;
-        });
-
-        const t = parseFloat(document.getElementById('c-tempo').value) || 0;
-        const lucroPorcento = parseFloat(document.getElementById('c-lucro').value) || 0;
-        const taxaPorcento = parseFloat(document.getElementById('c-taxa').value) || 0;
-
-        // Valor da Hora
-        const valorHora = (f + m) / h;
-        
-        // Custo de Produção (Material + Tempo de Mão de Obra)
-        const custoProducao = totalMat + ((t / 60) * valorHora);
-        
-        // Cálculo de Venda com Markup e Markup Divisor para taxas
-        // Preço = Custo + Lucro + Taxas
-        let precoVenda = custoProducao * (1 + (lucroPorcento / 100));
-        
-        // Aplicar taxas sobre o valor final (opcional, mas comum em comércio)
-        if(taxaPorcento > 0) {
-            precoVenda = precoVenda / (1 - (taxaPorcento / 100));
-        }
-
-        document.getElementById('res-custo').innerText = custoProducao.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
-        document.getElementById('res-venda').innerText = precoVenda.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
-    }
-    
-    // Inicializa o cálculo ao abrir
-    window.onload = runCalc;
-</script>
 
     <div id="aba-prod" class="aba">
         <div class="card">
-            <h2>🖨️ Estúdio de Montagem</h2>
-            <div class="grid" style="align-items: flex-end;">
-                <div class="field">
-                    <label>Formato da Polaroid</label>
-                    <select id="p-formato" onchange="limparEstudio()">
-                        <option value="padrao">Padrão (9.5 x 10.5)</option>
-                        <option value="mini">Mini (7 x 9)</option>
-                        <option value="instax">Instax (5.5 x 8)</option>
-                    </select>
-                </div>
-                <button class="btn" onclick="document.getElementById('file-in').click()">📂 CARREGAR FOTOS</button>
-                <button class="btn" style="background: var(--dark);" onclick="gerarPDF()">📄 EXPORTAR PDF</button>
+            <h2>🖨️ Estúdio</h2>
+            <select id="p-formato" onchange="limparProd()" style="margin-bottom:10px;">
+                <option value="padrao">Padrão (9.5x10.5)</option>
+                <option value="mini">Mini (7x9)</option>
+                <option value="instax">Instax (5.5x8)</option>
+            </select>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" onclick="document.getElementById('f-in').click()">📂 FOTOS</button>
+                <button class="btn" style="background:var(--dark)" onclick="gerarPDF()">📄 PDF</button>
             </div>
-            <input type="file" id="file-in" multiple hidden onchange="handleFiles(this)">
+            <input type="file" id="f-in" multiple hidden onchange="handleFiles(this)">
         </div>
         <div id="p-folhas"></div>
     </div>
 
     <div id="aba-pdv" class="aba">
-        <div class="card">
-            <h2>🧾 Frente de Caixa</h2>
-            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
-                <div>
-                    <label>Novo Item</label>
-                    <div style="display: flex; gap: 10px; margin-top: 5px;">
-                        <input type="text" id="i-nome" placeholder="Nome do Produto">
-                        <input type="number" id="i-valor" placeholder="R$ 0,00" style="width: 150px;">
-                        <button class="btn" onclick="addItem()">➕</button>
-                    </div>
-                    <div id="pdv-tabela" style="margin-top: 20px; border: 1px solid #f1f5f9; border-radius: 10px;">
-                        </div>
+        <div class="pdv-layout">
+            <div class="card pdv-lista">
+                <h2>🧾 PDV</h2>
+                <div style="display:flex; gap:5px; margin-bottom:15px;">
+                    <input type="text" id="i-nome" placeholder="Produto">
+                    <input type="number" id="i-valor" placeholder="R$" style="width:80px;">
+                    <button class="btn" onclick="addItem()" style="width:50px;">+</button>
                 </div>
-                <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0;">
-                    <label>Dados do Cliente</label>
-                    <input type="text" id="pdv-cliente" placeholder="Nome Completo" style="margin: 10px 0 20px 0;">
-                    <small>TOTAL A PAGAR</small>
-                    <div id="pdv-total" style="font-size: 2.5rem; font-weight: 900; color: var(--primary); margin-bottom: 20px;">R$ 0,00</div>
-                    <button class="btn" style="width: 100%; background: #059669;" onclick="printRecibo()">🖨️ EMITIR RECIBO</button>
-                    <button class="btn" style="width: 100%; background: #94a3b8; margin-top: 10px;" onclick="resetPDV()">🗑️ LIMPAR</button>
-                </div>
+                <div id="pdv-tabela"></div>
+            </div>
+            <div class="card pdv-resumo" style="background:var(--dark); color:#fff;">
+                <label style="color:#94a3b8">CLIENTE</label>
+                <input type="text" id="pdv-cli" style="background:#1e293b; color:#fff; border:none; margin-bottom:15px;">
+                <div id="pdv-total" style="font-size: 2.2rem; font-weight: 900; color: var(--accent);">R$ 0,00</div>
+                <button class="btn" style="background:#059669; margin-top:15px;" onclick="printRecibo()">🖨️ RECIBO</button>
             </div>
         </div>
     </div>
@@ -233,7 +145,6 @@
 <script>
     let STATE = { fotos: {}, carrinho: [] };
 
-    // Navegação Segura
     function tab(id, el) {
         document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -241,156 +152,94 @@
         el.classList.add('active');
     }
 
-    // --- LÓGICA: PRECIFICADOR ---
+    function addMat() {
+        const div = document.createElement('div');
+        div.style = "display:flex; gap:5px; margin-top:5px;";
+        div.innerHTML = `<input type="text" placeholder="Item" style="flex:2"><input type="number" class="mat-custo" value="0" oninput="runCalc()" style="flex:1"><button onclick="this.parentElement.remove(); runCalc()" style="border:none; background:none; color:red;">✕</button>`;
+        document.getElementById('lista-materiais').appendChild(div);
+    }
+
     function runCalc() {
         const f = parseFloat(document.getElementById('c-fixo').value) || 0;
         const m = parseFloat(document.getElementById('c-meta').value) || 0;
-        const h = parseFloat(document.getElementById('c-hrs').value) || 1;
-        const mat = parseFloat(document.getElementById('c-mat').value) || 0;
+        let mat = 0; document.querySelectorAll('.mat-custo').forEach(i => mat += parseFloat(i.value) || 0);
         const t = parseFloat(document.getElementById('c-tempo').value) || 0;
         const l = parseFloat(document.getElementById('c-lucro').value) / 100;
-
-        const vh = (f + m) / h;
-        const custo = mat + ((t / 60) * vh);
-        const venda = custo * (1 + l);
-
-        document.getElementById('res-custo').innerText = custo.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
-        document.getElementById('res-venda').innerText = venda.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
-        
-        localStorage.setItem('nostalgicas_fixo', f); // Salva preferência
+        const venda = (mat + ((t/60)*((f+m)/160))) * (1+l);
+        document.getElementById('res-venda').innerText = venda.toLocaleString('pt-br',{style:'currency', currency:'BRL'});
     }
 
-    // --- LÓGICA: PRODUÇÃO ---
     function handleFiles(input) {
         const fmt = document.getElementById('p-formato').value;
         const lim = { padrao: 4, mini: 6, instax: 9 }[fmt];
-        
         Array.from(input.files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => createCard(e.target.result, fmt, lim);
-            reader.readAsDataURL(file);
+            const r = new FileReader();
+            r.onload = (e) => {
+                const cont = document.getElementById('p-folhas');
+                let folha = cont.lastElementChild;
+                if (!folha || folha.querySelectorAll('.mini-polaroid').length >= lim) {
+                    folha = document.createElement('div'); folha.className = `folha-a4 f-${fmt}-grid`; cont.appendChild(folha);
+                }
+                const id = 'img_'+Math.random().toString(36).substr(2,9);
+                const card = document.createElement('div'); card.className = `mini-polaroid f-${fmt}`;
+                card.innerHTML = `<div class="foto-box"><img src="${e.target.result}" id="${id}"></div>`;
+                folha.appendChild(card);
+                setupImg(card.querySelector('img'), id);
+            };
+            r.readAsDataURL(file);
         });
-    }
-
-    function createCard(src, fmt, lim) {
-        const container = document.getElementById('p-folhas');
-        let folha = container.lastElementChild;
-        
-        if (!folha || folha.querySelectorAll('.mini-polaroid').length >= lim) {
-            folha = document.createElement('div');
-            folha.className = `folha-a4 f-${fmt}-grid`;
-            container.appendChild(folha);
-        }
-
-        const id = 'img_' + Math.random().toString(36).substr(2, 9);
-        const card = document.createElement('div');
-        card.className = `mini-polaroid f-${fmt}`;
-        card.innerHTML = `<button class="btn-girar" onclick="rotate('${id}')">🔄</button><div class="foto-box"><img src="${src}" id="${id}"></div>`;
-        folha.appendChild(card);
-        
-        setupImg(card.querySelector('img'), id);
     }
 
     function setupImg(img, id) {
         STATE.fotos[id] = { x: 0, y: 0, s: 1.1, r: 0 };
         const box = img.parentElement;
-
-        box.onwheel = (e) => {
+        
+        // Touch para Celular
+        let startDist = 0;
+        box.ontouchstart = (e) => {
+            if(e.touches.length === 2) startDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+            const t = e.touches[0]; box.startX = t.pageX - STATE.fotos[id].x; box.startY = t.pageY - STATE.fotos[id].y;
+        };
+        box.ontouchmove = (e) => {
             e.preventDefault();
-            STATE.fotos[id].s += e.deltaY > 0 ? -0.05 : 0.05;
-            apply(img, id);
+            if(e.touches.length === 2) {
+                const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                STATE.fotos[id].s *= dist/startDist; startDist = dist;
+            } else {
+                const t = e.touches[0]; STATE.fotos[id].x = t.pageX - box.startX; STATE.fotos[id].y = t.pageY - box.startY;
+            }
+            img.style.transform = `translate(${STATE.fotos[id].x}px, ${STATE.fotos[id].y}px) scale(${STATE.fotos[id].s})`;
         };
-
-        let isDown = false, startX, startY;
-        box.onmousedown = (e) => { 
-            isDown = true; 
-            startX = e.clientX - STATE.fotos[id].x; 
-            startY = e.clientY - STATE.fotos[id].y; 
-        };
-        window.onmousemove = (e) => {
-            if (!isDown) return;
-            STATE.fotos[id].x = e.clientX - startX;
-            STATE.fotos[id].y = e.clientY - startY;
-            apply(img, id);
-        };
-        window.onmouseup = () => isDown = false;
     }
 
-    function rotate(id) {
-        STATE.fotos[id].r = (STATE.fotos[id].r + 90) % 360;
-        apply(document.getElementById(id), id);
-    }
-
-    function apply(img, id) {
-        img.style.transform = `translate(${STATE.fotos[id].x}px, ${STATE.fotos[id].y}px) scale(${STATE.fotos[id].s}) rotate(${STATE.fotos[id].r}deg)`;
-    }
-
-    async function gerarPDF() {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const folhas = document.querySelectorAll('.folha-a4');
-        
-        for (let i = 0; i < folhas.length; i++) {
-            if (i > 0) pdf.addPage();
-            const canvas = await html2canvas(folhas[i], { scale: 2, useCORS: true });
-            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
-        }
-        pdf.save('Producao_Nostalgicas.pdf');
-    }
-
-    function limparEstudio() { document.getElementById('p-folhas').innerHTML = ''; }
-
-    // --- LÓGICA: PDV ---
     function addItem() {
-        const n = document.getElementById('i-nome').value;
-        const v = parseFloat(document.getElementById('i-valor').value);
-        if (!n || isNaN(v)) return alert("Dados inválidos");
-        
-        STATE.carrinho.push({ n, v });
-        document.getElementById('i-nome').value = '';
-        document.getElementById('i-valor').value = '';
-        renderPDV();
+        const n = document.getElementById('i-nome').value, v = parseFloat(document.getElementById('i-valor').value);
+        if(!n || isNaN(v)) return;
+        STATE.carrinho.push({n, v}); renderPDV();
     }
 
     function renderPDV() {
-        const container = document.getElementById('pdv-tabela');
-        container.innerHTML = '';
-        let total = 0;
-
-        STATE.carrinho.forEach((item, index) => {
-            total += item.v;
-            container.innerHTML += `
-                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #f1f5f9; align-items:center;">
-                    <span style="font-weight:600">${item.n}</span>
-                    <span>R$ ${item.v.toFixed(2)} <button onclick="removeItem(${index})" style="background:none; border:none; color:red; cursor:pointer; margin-left:10px;">✕</button></span>
-                </div>
-            `;
+        const c = document.getElementById('pdv-tabela'); c.innerHTML = ''; let t = 0;
+        STATE.carrinho.forEach((item, i) => {
+            t += item.v;
+            c.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span>${item.n}</span><span>R$ ${item.v.toFixed(2)} <button onclick="STATE.carrinho.splice(${i},1); renderPDV()" style="color:red; border:none; background:none;">✕</button></span></div>`;
         });
-        document.getElementById('pdv-total').innerText = total.toLocaleString('pt-br', {style:'currency', currency:'BRL'});
+        document.getElementById('pdv-total').innerText = t.toLocaleString('pt-br',{style:'currency', currency:'BRL'});
     }
 
-    function removeItem(idx) { STATE.carrinho.splice(idx, 1); renderPDV(); }
-    function resetPDV() { STATE.carrinho = []; renderPDV(); document.getElementById('pdv-cliente').value = ''; }
+    async function gerarPDF() {
+        const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4');
+        const folhas = document.querySelectorAll('.folha-a4');
+        for (let i = 0; i < folhas.length; i++) {
+            if (i > 0) pdf.addPage();
+            const canvas = await html2canvas(folhas[i], { scale: 2 });
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 210, 297);
+        }
+        pdf.save('Nostalgicas_App.pdf');
+    }
 
     function printRecibo() {
-        if (STATE.carrinho.length === 0) return;
-        const cli = document.getElementById('pdv-cliente').value || "Cliente Geral";
-        const total = document.getElementById('pdv-total').innerText;
-        
-        const div = document.createElement('div');
-        div.id = 'area-recibo';
-        div.innerHTML = `
-            <div style="font-family:monospace; width:80mm; padding:10px;">
-                <center><h2>NOSTÁLGICAS</h2><p>Personalizados</p><hr></center>
-                <p>CLIENTE: ${cli.toUpperCase()}<br>DATA: ${new Date().toLocaleDateString()}</p><hr>
-                ${STATE.carrinho.map(i => `<div style="display:flex; justify-content:space-between"><span>${i.n}</span><span>R$ ${i.v.toFixed(2)}</span></div>`).join('')}
-                <hr><div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.2em"><span>TOTAL</span><span>${total}</span></div>
-                <center><br><p>Obrigado pela preferência!</p><p>@nostalgicas_personalizados</p></center>
-            </div>
-        `;
-        document.body.appendChild(div);
-        window.print();
-        document.body.removeChild(div);
+        window.print(); // Otimizado via CSS @media print
     }
 
     runCalc();
