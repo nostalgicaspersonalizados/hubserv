@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostálgicas Hub - Gestão Profissional</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="card" style="width: 320px; text-align: center;">
+        <h2 style="margin-bottom: 20px;">Nostálgicas Hub</h2>
+        <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom: 10px; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+        <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom: 15px; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+        <button class="btn" onclick="handleAuth('login')">ENTRAR</button>
+        <p id="auth-msg" style="color:red; font-size:12px; margin-top:10px;"></p>
+    </div>
+</div>
+
+<aside class="sidebar">
+    <div class="logo">NOSTÁLGICAS</div>
+    <button class="nav-item" onclick="tab('calc', this)">💰 Precificador</button>
+    <button class="nav-item active" onclick="tab('prod', this)">🖨️ Estúdio Fotos</button>
+    <button class="nav-item" onclick="tab('pdv', this)">🧾 PDV / Recibo</button>
+    <button class="nav-item" onclick="logout()" style="margin-top:auto; color:#f87171;">🚪 Sair</button>
+</aside>
+
+<main class="main">
+    
+    <div id="aba-prod" class="aba ativa">
+        <div class="card">
+            <h2>Estúdio de Montagem</h2>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px;">
+                <select id="p-modelo" onchange="limparEstudio()">
+                    <option value="padrao">Polaroid (9,5x10)</option>
+                    <option value="mini">Mini (7x9)</option>
+                    <option value="instax">Instax (5,5x8)</option>
+                    <option value="trio">Trio Cabine (5x15)</option>
+                </select>
+                <button class="btn" onclick="document.getElementById('f-in').click()">📂 Selecionar Fotos</button>
+                <button class="btn" style="background:var(--dark)" onclick="exportarPDF()">📄 Gerar PDF</button>
+            </div>
+            <input type="file" id="f-in" multiple hidden>
+        </div>
+        
+        <div id="p-folhas"></div>
+    </div>
+
+    <div id="aba-calc" class="aba">
+        <div class="card">
+            <h2>Precificador Profissional</h2>
+            <p>Módulo em desenvolvimento...</p>
+        </div>
+    </div>
+
+    <div id="aba-pdv" class="aba">
+        <div class="card">
+            <h2>PDV / Recibos</h2>
+            <p>Módulo em desenvolvimento...</p>
+        </div>
+    </div>
+</main>
+
+<div id="editor-modal">
+    <div class="modal-content">
+        <h3 style="margin-top: 0;">Ajustar Enquadramento</h3>
+        <div id="crop-area">
+            <img src="" id="crop-img">
+        </div>
+        
+        <label style="font-size: 12px; font-weight: bold; color: #64748b;">ZOOM</label>
+        <input type="range" id="zoom-ctrl" min="0.1" max="3" step="0.01" value="0.8">
+        
+        <div style="display: flex; gap: 10px;">
+            <button class="btn" style="background:#64748b; flex: 1;" onclick="closeEditor()">CANCELAR</button>
+            <button class="btn" style="flex: 1;" onclick="saveCrop()">SALVAR AJUSTE</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="auth.js"></script>
+<script type="module" src="estudio.js"></script>
+
+<script>
+    // Lógica simples de troca de abas (mantida aqui para ser rápida)
+    function tab(id, el) {
+        document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('aba-' + id).classList.add('ativa');
+        el.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
