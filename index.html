@@ -78,13 +78,34 @@
     </div>
 </div>
 
-    <div id="aba-pdv" class="aba">
-        <div class="card">
-            <h2>PDV / Recibos</h2>
-            <p>Módulo em desenvolvimento...</p>
+    <<div id="aba-pdv" class="aba">
+    <div class="card">
+        <h2>🧾 Emissor de Recibo Rápido</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+            <div>
+                <input type="text" id="pdv-cliente" placeholder="Nome do Cliente" style="margin-bottom: 10px;">
+                <div style="display: flex; gap: 5px; margin-bottom: 20px;">
+                    <input type="text" id="pdv-item" placeholder="Produto (Ex: Caneca)">
+                    <input type="number" id="pdv-valor" placeholder="R$" style="width: 100px;">
+                    <button class="btn" onclick="adicionarItem()" style="width: 50px;">+</button>
+                </div>
+                <button class="btn" style="background: var(--dark); width: 100%;" onclick="gerarReciboPDF()">📄 GERAR RECIBO PDF</button>
+            </div>
+
+            <div id="recibo-preview" style="background: #fff; border: 1px dashed #ccc; padding: 20px; min-height: 200px;">
+                <h3 style="text-align: center; margin-top: 0;">NOSTÁLGICAS</h3>
+                <p id="preview-cliente" style="font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Cliente: ---</p>
+                <table id="tabela-itens" style="width: 100%; font-size: 13px; text-align: left; border-collapse: collapse;">
+                    <thead><tr style="border-bottom: 1px solid #eee;"><th>Item</th><th>Valor</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <div style="margin-top: 15px; text-align: right; font-weight: bold;">
+                    Total: <span id="preview-total">R$ 0,00</span>
+                </div>
+            </div>
         </div>
     </div>
-</main>
+</div>
 
 <div id="editor-modal">
     <div class="modal-content">
