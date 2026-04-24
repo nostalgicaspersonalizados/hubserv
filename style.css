@@ -1,3 +1,22 @@
+/* --- ESCONDER ELEMENTOS POR PADRÃO --- */
+.aba { display: none; }
+.aba.ativa { display: block; }
+
+#editor-modal { 
+    display: none !important; /* O !important garante que ele suma */
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.9); 
+    z-index: 99999; 
+}
+
+/* Garante que o conteúdo não fique "colado" no menu */
+.main { 
+    flex: 1; 
+    padding: 40px; 
+    overflow-y: auto; 
+    background: #f1f5f9; 
+}
 /* --- VARIÁVEIS E CONFIGURAÇÕES GERAIS --- */
 :root {
     --primary: #e11d48; /* Rosa Nostálgicas */
