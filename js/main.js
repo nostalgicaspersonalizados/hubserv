@@ -9,22 +9,31 @@ document.addEventListener('DOMContentLoaded', () => {
 // 2. Navegação Global entre Abas (SaaS Multi-ferramentas)
 window.tab = async (id) => {
     // UI: Gerenciar classes de visualização
+    // Selecionamos apenas .tab-content para evitar conflitos com classes de botões
     document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     
     const target = document.getElementById('tab-' + id);
-    // Seleciona o botão de navegação correspondente
-    const navBtn = document.querySelector(`[onclick*="tab('${id}')"]`);
     
-    if (target) target.style.display = 'block';
-    if (navBtn) navBtn.classList.add('active');
+    // Ajuste no Seletor: Busca o botão que contém a chamada para esta aba específica
+    const navBtn = document.querySelector(`.nav-item[onclick*="tab('${id}')"]`);
+    
+    if (target) {
+        target.style.display = 'block';
+    } else {
+        console.warn(`Aba tab-${id} não encontrada no HTML.`);
+    }
+
+    if (navBtn) {
+        navBtn.classList.add('active');
+    }
 
     // Carregamento On-Demand (Lazy Loading) para performance
     try {
         switch(id) {
             case 'dash':
                 const { dashboard } = await import('./dashboard.js');
-                dashboard.atualizar();
+                await dashboard.atualizar();
                 break;
             case 'calc':
                 const { calculadora } = await import('./calculadora.js');
@@ -32,19 +41,18 @@ window.tab = async (id) => {
                 break;
             case 'pdv':
                 const { pdv } = await import('./pdv.js');
-                pdv.init();
+                if (pdv.init) pdv.init();
                 break;
             case 'fotos':
                 const { fotos } = await import('./fotos.js');
-                fotos.init();
+                if (fotos.init) fotos.init();
                 break;
             case 'bg':
-                // Apenas garante que o módulo pode ser carregado se necessário
                 console.log("Módulo de Remoção de Fundo pronto.");
                 break;
         }
     } catch (err) {
-        console.error("Erro ao carregar módulo:", err);
+        console.error(`Erro ao carregar o módulo [${id}]:`, err);
     }
 };
 
@@ -60,12 +68,13 @@ document.addEventListener('click', async (e) => {
     // --- LÓGICA DE REMOÇÃO DE FUNDO (IA) ---
     if (e.target.id === 'btn-remove-bg') {
         const { bgRemover } = await import('./bg-remover.js');
-        const input = document.getElementById('f-in'); // Ajustado para o ID do seu HTML
+        // No seu HTML o ID do input de arquivo é 'f-in'
+        const input = document.getElementById('f-in'); 
         
         if (input && input.files[0]) {
             await bgRemover.remover(input.files[0]);
         } else {
-            alert("Selecione uma imagem primeiro no campo de arquivo.");
+            alert("Por favor, selecione uma imagem primeiro.");
         }
     }
 
@@ -88,9 +97,9 @@ document.addEventListener('click', async (e) => {
             try {
                 const { dbService } = await import('./db.js');
                 await dbService.salvar('calculos', data);
-                alert("✅ Cálculo guardado com sucesso no seu histórico!");
+                alert("✅ Cálculo guardado com sucesso!");
             } catch (err) {
-                alert("❌ Erro ao salvar cálculo. Verifique a conexão.");
+                alert("❌ Erro ao salvar cálculo no banco de dados.");
             }
         }
     }
@@ -98,13 +107,14 @@ document.addEventListener('click', async (e) => {
     // --- LÓGICA DO PDV (VENDAS) ---
     if (e.target.id === 'btn-add-item') {
         const { pdv } = await import('./pdv.js');
-        const nome = document.getElementById('p-item-nome').value;
-        const valor = document.getElementById('p-item-valor').value;
+        const nomeIn = document.getElementById('p-item-nome');
+        const valorIn = document.getElementById('p-item-valor');
         
-        if (nome && valor) {
-            pdv.adicionarItem(nome, valor);
-            document.getElementById('p-item-nome').value = '';
-            document.getElementById('p-item-valor').value = '';
+        if (nomeIn.value && valorIn.value) {
+            pdv.adicionarItem(nomeIn.value, valorIn.value);
+            nomeIn.value = '';
+            valorIn.value = '';
+            nomeIn.focus();
         } else {
             alert("⚠️ Informe o nome e o valor do produto.");
         }
@@ -120,10 +130,11 @@ document.addEventListener('click', async (e) => {
                 await dbService.salvar('pedidos', payload);
                 alert("✅ Venda registrada com sucesso!");
                 
+                // Atualiza o dashboard para refletir a nova venda
                 const { dashboard } = await import('./dashboard.js');
-                dashboard.atualizar();
+                await dashboard.atualizar();
             } catch (err) {
-                alert("❌ Erro ao processar venda no banco de dados.");
+                alert("❌ Erro ao processar venda no Firebase.");
             }
         }
     }
