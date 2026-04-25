@@ -28,6 +28,7 @@
     <button class="nav-item" onclick="tab('calc', this)">💰 Precificador</button>
     <button class="nav-item active" onclick="tab('prod', this)">🖨️ Estúdio Fotos</button>
     <button class="nav-item" onclick="tab('pdv', this)">🧾 PDV / Recibo</button>
+    <button class="nav-item" onclick="tab('bg-rem', this)">✂️ Remover Fundo</button>
     <button class="nav-item" onclick="logout()" style="margin-top:auto; color:#f87171;">🚪 Sair</button>
 </aside>
 
@@ -151,6 +152,32 @@
         </div>
     </div>
 </main>
+    <div id="aba-bg-rem" class="aba">
+    <div class="card">
+        <h2>✂️ Removedor de Fundo Inteligente</h2>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
+            Dica: Use fotos com fundo contrastante para melhores resultados. O processamento é feito no seu computador.
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
+            <input type="file" id="f-remove" accept="image/*" style="display: none;" onchange="processarRemocao()">
+            <button class="btn" onclick="document.getElementById('f-remove').click()" style="width: 100%; max-width: 300px;">
+                📂 Selecionar Imagem
+            </button>
+
+            <div id="loading-remove" style="display: none; text-align: center;">
+                <div class="spinner"></div>
+                <p>Removendo fundo... Isso pode levar alguns segundos.</p>
+            </div>
+
+            <div id="result-area" style="display: none; text-align: center;">
+                <canvas id="canvas-remove" style="max-width: 100%; border: 1px solid #ddd; border-radius: 8px; background: url('https://www.transparenttextures.com/patterns/checkerboard.png');"></canvas>
+                <br><br>
+                <button class="btn" style="background: var(--dark);" onclick="baixarImagemSemFundo()">💾 Baixar em PNG</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="editor-modal">
     <div class="modal-content">
