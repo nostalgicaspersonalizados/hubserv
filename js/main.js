@@ -40,7 +40,26 @@ window.tab = async (id) => {
          case 'fotos':
             const { fotos } = await import('./fotos.js');
             fotos.init();
-            break;     
+            break; 
+      // Dentro do document.addEventListener('click', async (e) => { ... }) no main.js
+
+// Gatilho: Executar Remoção
+if (e.target.id === 'btn-remove-bg') {
+    const { bgRemover } = await import('./bg-remover.js');
+    const input = document.getElementById('bg-input-file');
+    
+    if (input.files[0]) {
+        await bgRemover.remover(input.files[0]);
+    } else {
+        alert("Selecione uma imagem primeiro.");
+    }
+}
+
+// Gatilho: Baixar Imagem sem Fundo
+if (e.target.id === 'btn-download-bg') {
+    const { bgRemover } = await import('./bg-remover.js');
+    bgRemover.baixarResultado();
+}      
     }
 };
 
