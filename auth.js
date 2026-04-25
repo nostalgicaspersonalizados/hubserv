@@ -46,12 +46,13 @@ window.logout = () => {
 
 // 4. OBSERVADOR DE ESTADO (Onde a mágica acontece)
 onAuthStateChanged(auth, (user) => {
+    const body = document.body;
     if (user) {
-        // ADICIONA a classe que mostra a sidebar e o main (conforme o novo CSS)
-        document.body.classList.add('logged-in');
-        console.log("Acesso liberado:", user.email);
+        // Usuário logado: Adiciona a classe que o CSS usa para mostrar tudo
+        body.classList.add('logged-in');
+        console.log("Logado como:", user.email);
     } else {
-        // REMOVE a classe caso não esteja logado
-        document.body.classList.remove('logged-in');
+        // Usuário deslogado: Remove a classe e volta para o login
+        body.classList.remove('logged-in');
     }
 });
