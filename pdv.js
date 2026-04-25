@@ -1,10 +1,16 @@
 function gerarRecibo() {
-    const cliente = document.getElementById('r-cli').value || "Cliente";
-    const item = document.getElementById('r-item').value || "Produto";
+    const cliente = document.getElementById('r-cli').value || '-';
+    const produto = document.getElementById('r-item').value || '-';
     const valor = parseFloat(document.getElementById('r-val').value) || 0;
-    
-    const texto = `Cliente: ${cliente} | Item: ${item} | Total: R$ ${valor.toFixed(2)}`;
+
+    const data = new Date().toLocaleDateString();
+
+    const texto = `
+Cliente: ${cliente}
+Produto: ${produto}
+Valor: R$ ${valor.toFixed(2)}
+Data: ${data}
+    `;
+
     document.getElementById('v-txt').innerText = texto;
-    
-    alert("Recibo gerado no preview!");
 }
