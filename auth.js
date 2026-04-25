@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
-// 1. CONFIGURAÇÃO (Substitua pelos seus dados se necessário)
+// 1. CONFIGURAÇÃO
 const firebaseConfig = {
     apiKey: "AIzaSyB16iMJr1wKOfijoFCuClRKIP05CHdE9q4",
     authDomain: "nostalgicashub.firebaseapp.com",
@@ -15,7 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// 3. FUNÇÕES GLOBAIS (Expostas para o HTML via window)
+// 3. FUNÇÕES GLOBAIS
 window.handleAuth = (modo) => {
     const email = document.getElementById('auth-email').value;
     const senha = document.getElementById('auth-senha').value;
@@ -38,18 +38,20 @@ window.handleAuth = (modo) => {
 
 window.logout = () => {
     signOut(auth).then(() => {
-        location.reload(); // Recarrega para limpar o estado do sistema
+        // Remove a classe de logado antes de recarregar
+        document.body.classList.remove('logged-in');
+        location.reload(); 
     });
 };
 
-// 4. OBSERVADOR DE ESTADO
-// Isso controla se a tela de login aparece ou some
+// 4. OBSERVADOR DE ESTADO (Onde a mágica acontece)
 onAuthStateChanged(auth, (user) => {
-    const authScreen = document.getElementById('auth-screen');
     if (user) {
-        authScreen.style.display = 'none';
-        console.log("Usuário logado:", user.email);
+        // ADICIONA a classe que mostra a sidebar e o main (conforme o novo CSS)
+        document.body.classList.add('logged-in');
+        console.log("Acesso liberado:", user.email);
     } else {
-        authScreen.style.display = 'flex';
+        // REMOVE a classe caso não esteja logado
+        document.body.classList.remove('logged-in');
     }
 });
