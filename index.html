@@ -47,13 +47,15 @@
 
    <div id="auth-overlay" class="overlay">
     <div class="auth-card">
-        <h2>Nostálgicas Hub Pro</h2>
-        <input type="email" id="login-email" placeholder="Seu e-mail" style="margin-top:20px">
-        <input type="password" id="login-pass" placeholder="Sua senha">
-        <button id="btn-login" class="btn-p">ENTRAR</button>
-        <p id="auth-error" style="color:red; font-size:12px; margin-top:10px"></p>
-    </div>
-
+    <h2>Nostálgicas Hub</h2>
+    <form id="login-form" onsubmit="return false;">
+        <input type="email" id="login-email" placeholder="E-mail" required autocomplete="username">
+        <input type="password" id="login-pass" placeholder="Senha" required autocomplete="current-password">
+        <button type="submit" id="btn-login" class="btn-p">ENTRAR</button>
+    </form>
+    <p id="auth-error" style="color:red; font-size:12px; margin-top:10px"></p>
+</div>
+       
    </div>
     
     <div class="app-container" style="display:none;">
