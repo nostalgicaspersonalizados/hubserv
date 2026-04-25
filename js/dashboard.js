@@ -1,39 +1,77 @@
-import { db, auth } from './firebase.js';
-import { collection, query, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { dbService } from './db.js';
 
 export const dashboard = {
     async atualizar() {
-        if (!auth.currentUser) {
-            console.log("Dashboard: Aguardando login...");
+        console.log("📊 Dashboard: Atualizando métricas...");
+        
+        try {
+            // 1. Busca os pedidos do Firebase (Coleção definida no PDV)
+            const pedidos = await dbService.buscarHistorico('pedidos', 50); 
+            
+            // 2. Processamento de Métricas
+            let faturamentoTotal = 0;
+            let totalPedidos = pedidos.length;
+            let pedidosPagos = 0;
+
+            pedidos.forEach(pedido => {
+                // Soma o faturamento (usando a estrutura de payload do PDV)
+                faturamentoTotal += pedido.financeiro?.totalVenda || 0;
+                
+                if (pedido.financeiro?.status === 'pago') {
+                    pedidosPagos++;
+                }
+            });
+
+            const ticketMedio = totalPedidos > 0 ? (faturamentoTotal / totalPedidos) : 0;
+
+            // 3. Atualização da Interface (DOM)
+            this.renderizarCards({
+                faturamento: faturamentoTotal,
+                qtd: totalPedidos,
+                pago: pedidosPagos,
+                ticket: ticketMedio
+            });
+
+            // 4. Renderizar Lista de Atividades Recentes
+            this.renderizarListaRecente(pedidos.slice(0, 5));
+
+        } catch (error) {
+            console.error("Erro ao processar Dashboard:", error);
+        }
+    },
+
+    renderizarCards(dados) {
+        const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        const elMoney = document.getElementById('stat-money');
+        const elPedidos = document.getElementById('stat-pedidos');
+        const elTicket = document.getElementById('stat-ticket');
+
+        if (elMoney) elMoney.innerText = fmt.format(dados.faturamento);
+        if (elPedidos) elPedidos.innerText = dados.qtd;
+        if (elTicket) elTicket.innerText = fmt.format(dados.ticket);
+    },
+
+    renderizarListaRecente(pedidos) {
+        const lista = document.getElementById('lista-recente');
+        if (!lista) return;
+
+        if (pedidos.length === 0) {
+            lista.innerHTML = `<p style="color:var(--text-dim)">Nenhuma venda registrada ainda.</p>`;
             return;
         }
 
-        try {
-            const q = query(collection(db, `usuarios/${auth.currentUser.uid}/pedidos`));
-            const snap = await getDocs(q);
-            
-            let totalPedidos = 0;
-            let faturamento = 0;
-
-            snap.forEach(doc => {
-                const d = doc.data();
-                totalPedidos++;
-                faturamento += parseFloat(d.valor || 0);
-            });
-
-            // Atualiza a tela com segurança
-            const elPedidos = document.getElementById('stat-pedidos');
-            const elMoney = document.getElementById('stat-money');
-            
-            if (elPedidos) elPedidos.innerText = totalPedidos;
-            if (elMoney) elMoney.innerText = faturamento.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
-            
-            console.log("Dashboard atualizado com sucesso!");
-        } catch (error) {
-            console.error("Erro ao carregar Dashboard:", error);
-            // Se der erro de "coleção não encontrada", ele apenas mostra 0
-            document.getElementById('stat-pedidos').innerText = "0";
-            document.getElementById('stat-money').innerText = "R$ 0,00";
-        }
+        lista.innerHTML = pedidos.map(p => `
+            <div class="activity-item" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #334155;">
+                <div>
+                    <span style="display:block; font-weight:bold;">${p.cliente?.nome || 'Cliente Final'}</span>
+                    <small style="color:var(--text-dim)">${p.data} às ${p.hora}</small>
+                </div>
+                <div style="text-align:right;">
+                    <span style="display:block; color:#10b981;">R$ ${(p.financeiro?.totalVenda || 0).toFixed(2)}</span>
+                    <span class="badge" style="font-size:10px; background:#334155; padding:2px 6px; border-radius:4px;">${p.financeiro?.metodo.toUpperCase()}</span>
+                </div>
+            </div>
+        `).join('');
     }
 };
