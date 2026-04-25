@@ -52,13 +52,6 @@ export const calculadora = {
                     lucro: Number(lucroReal.toFixed(2)),
                     moeda: "BRL"
                 },
-                // Exemplo de como usar no evento de clique do btn-save-calc
-                const data = calculadora.calcular(); // Pega o pacote de dados
-                if (data) {
-                const { dbService } = await import('./db.js');
-                  await dbService.salvar('calculos', data);
-                  alert("Cálculo guardado no seu histórico Pro!");
-}
                 detalhes: { unitario, qtd, tempo, margemPercentual },
                 criadoEm: Date.now()
             };
