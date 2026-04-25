@@ -1,41 +1,28 @@
-:root { --primary: #6366f1; --dark: #0f172a; --bg: #f1f5f9; }
-
+:root { --p: #6366f1; --d: #0f172a; --bg: #f8fafc; }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-body { display: flex; height: 100vh; background: var(--bg); color: var(--dark); overflow: hidden; }
+body { display: flex; height: 100vh; background: var(--bg); }
 
-/* NAVEGAÇÃO */
-.sidebar { width: 240px; background: var(--dark); color: white; padding: 25px; }
-.brand { font-weight: 900; font-size: 20px; color: var(--primary); margin-bottom: 40px; text-align: center; }
-.nav-item { width: 100%; padding: 14px; border: none; background: none; color: #94a3b8; text-align: left; cursor: pointer; border-radius: 10px; font-weight: 600; margin-bottom: 8px; }
-.nav-item.active { background: var(--primary); color: white; }
+.sidebar { width: 240px; background: var(--d); color: white; padding: 25px; }
+.brand { font-weight: 900; font-size: 20px; color: var(--p); margin-bottom: 30px; text-align: center; }
+.nav-btn { width: 100%; padding: 12px; border: none; background: none; color: #94a3b8; text-align: left; cursor: pointer; font-weight: 600; }
+.nav-btn.active { background: var(--p); color: white; border-radius: 8px; }
 
-/* ÁREA PRINCIPAL */
-.main { flex: 1; padding: 30px; overflow-y: auto; }
-.aba { display: none; }
-.aba.ativa { display: block; }
-.card { background: white; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.content { flex: 1; padding: 30px; overflow-y: auto; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-/* GRID E INPUTS */
-.grid-2 { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px; }
-.form-grid { display: flex; flex-direction: column; gap: 12px; }
-.field label { font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 4px; display: block; }
-input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+/* FOTOS BLINDADAS */
+#print-area { background: #ddd; padding: 40px; display: flex; justify-content: center; }
+#molde { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.p-padrao { width: 250px; height: 280px; }
+.p-instax { width: 160px; height: 240px; }
+.p-cabine { width: 140px; height: 450px; display: flex; flex-direction: column; gap: 5px; padding: 10px !important; }
 
-/* BOTÕES */
-.btn-p { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; }
-.btn-s { background: #e2e8f0; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.photo-box { width: 100%; height: 100%; overflow: hidden; background: #eee; }
+#molde.p-cabine .photo-box { height: 32%; }
+.photo-box img { width: 100%; height: 100%; object-fit: cover !important; } /* AQUI A FOTO É TRAVADA */
 
-/* ESTÚDIO (FIX DAS FOTOS) */
-.preview-area { background: #eee; padding: 50px; display: flex; justify-content: center; min-height: 500px; border-radius: 10px; }
-#molde-print { background: white; padding: 10px 10px 35px 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-
-.p-padrao { width: 280px; height: 300px; }
-.p-instax { width: 180px; height: 260px; }
-.p-mini { width: 220px; height: 280px; }
-.p-cabine { width: 140px; height: 420px; padding: 10px !important; display: flex; flex-direction: column; gap: 8px; }
-
-.img-container { width: 100%; height: 100%; overflow: hidden; background: #f8fafc; }
-#molde-print.p-cabine .img-container { height: 32%; }
-.img-container img { width: 100%; height: 100%; object-fit: cover; } /* TRAVA DA FOTO */
-
-@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } body { flex-direction: column; } .sidebar { width: 100%; height: auto; } }
+input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; }
+.btn-p { background: var(--p); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
