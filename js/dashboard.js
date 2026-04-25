@@ -3,19 +3,37 @@ import { collection, query, getDocs } from "https://www.gstatic.com/firebasejs/1
 
 export const dashboard = {
     async atualizar() {
-        const q = query(collection(db, `usuarios/${auth.currentUser.uid}/pedidos`));
-        const snap = await getDocs(q);
-        
-        let totalPedidos = 0;
-        let faturamento = 0;
+        if (!auth.currentUser) {
+            console.log("Dashboard: Aguardando login...");
+            return;
+        }
 
-        snap.forEach(doc => {
-            const d = doc.data();
-            totalPedidos++;
-            faturamento += d.valor;
-        });
+        try {
+            const q = query(collection(db, `usuarios/${auth.currentUser.uid}/pedidos`));
+            const snap = await getDocs(q);
+            
+            let totalPedidos = 0;
+            let faturamento = 0;
 
-        document.getElementById('stat-pedidos').innerText = totalPedidos;
-        document.getElementById('stat-money').innerText = faturamento.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
+            snap.forEach(doc => {
+                const d = doc.data();
+                totalPedidos++;
+                faturamento += parseFloat(d.valor || 0);
+            });
+
+            // Atualiza a tela com segurança
+            const elPedidos = document.getElementById('stat-pedidos');
+            const elMoney = document.getElementById('stat-money');
+            
+            if (elPedidos) elPedidos.innerText = totalPedidos;
+            if (elMoney) elMoney.innerText = faturamento.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
+            
+            console.log("Dashboard atualizado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao carregar Dashboard:", error);
+            // Se der erro de "coleção não encontrada", ele apenas mostra 0
+            document.getElementById('stat-pedidos').innerText = "0";
+            document.getElementById('stat-money').innerText = "R$ 0,00";
+        }
     }
 };
