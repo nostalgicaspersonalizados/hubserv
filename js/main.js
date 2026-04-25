@@ -1,40 +1,76 @@
 import { initAuth } from './auth.js';
 
-// Inicializa a autenticação IMEDIATAMENTE
-console.log("Tentando iniciar Autenticação...");
-initAuth();
+// Inicialização imediata do sistema de segurança
+document.addEventListener('DOMContentLoaded', () => {
+    initAuth();
+    console.log("Nostálgicas Hub Pro: Sistema inicializado com sucesso.");
+});
 
-// Função de trocar abas (Global)
+// Navegação de Abas (Global para ser chamada pelo HTML)
 window.tab = async (id) => {
-    // Esconde tudo
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('ativa'));
+    // UI: Gerenciar visual das abas e botões da sidebar
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     
-    // Mostra a certa
     const target = document.getElementById('tab-' + id);
-    if (target) target.classList.add('ativa');
+    const navBtn = document.querySelector(`[onclick="tab('${id}')"]`);
+    
+    if (target) target.style.display = 'block';
+    if (navBtn) navBtn.classList.add('active');
 
-    // Carrega módulos apenas quando necessário (Evita o erro 404 de travar o login)
-    if (id === 'dash') {
-        const mod = await import('./dashboard.js').catch(e => console.error("Erro no Dash:", e));
-        if (mod) mod.dashboard.atualizar();
-    }
-    if (id === 'calc') {
-        await import('./calculadora.js').catch(e => console.error("Erro na Calc:", e));
+    // Carregamento dinâmico de lógica para otimizar performance (SaaS)
+    switch(id) {
+        case 'dash':
+            const { dashboard } = await import('./dashboard.js');
+            dashboard.atualizar();
+            break;
+        case 'calc':
+            const { calculadora } = await import('./calculadora.js');
+            calculadora.init();
+            break;
+        case 'pdv':
+            const { pdv } = await import('./pdv.js');
+            pdv.init();
+            break;
     }
 };
 
-// Configura botões de clique (com proteção contra erro)
+// Listener Global de Cliques para Ações Rápidas
 document.addEventListener('click', async (e) => {
+    // Gatilho da Calculadora
     if (e.target.id === 'btn-calc') {
-        const mod = await import('./calculadora.js');
-        mod.calculadora.calcular();
+        const { calculadora } = await import('./calculadora.js');
+        calculadora.calcular();
     }
-    if (e.target.id === 'btn-pdf') {
-        const mod = await import('./fotos.js');
-        if (window.userPlano === 'pro') mod.fotos.exportarPDF();
-        else alert("Apenas no Plano PRO");
+
+    // Gatilho para Salvar Cálculo (Firebase)
+    if (e.target.id === 'btn-save-calc') {
+        const { calculadora } = await import('./calculadora.js');
+        const data = calculadora.calcular(); // Pega o payload pronto
+        if (data) {
+            console.log("Enviando para Firebase:", data);
+            // Aqui entrará a função de persistência: db.save('calculos', data);
+        }
+    }
+
+    // Lógica do PDV: Adicionar ao Carrinho
+    if (e.target.id === 'btn-add-item') {
+        const { pdv } = await import('./pdv.js');
+        const nome = document.getElementById('p-item-nome').value;
+        const valor = document.getElementById('p-item-valor').value;
+        if (nome && valor) {
+            pdv.adicionarItem(nome, valor);
+            // Limpa campos após adicionar
+            document.getElementById('p-item-nome').value = '';
+            document.getElementById('p-item-valor').value = '';
+        } else {
+            alert("Preencha o nome e o valor do produto.");
+        }
+    }
+
+    // Finalizar Venda no PDV
+    if (e.target.id === 'btn-finish-sale') {
+        const { pdv } = await import('./pdv.js');
+        pdv.fecharVenda();
     }
 });
-
-console.log("🚀 Main carregado. Se a tela não sumir ao logar, o erro está no auth.js");
