@@ -13,27 +13,24 @@
 </head>
 <body>
 
-<div id="auth-overlay" class="overlay">
-    </div>
-
-<main id="app-content" style="display: none;">
-    </main>
+    <div id="auth-overlay" class="overlay">
+        <div class="auth-card">
             <div class="auth-logo">NOSTÁLGICAS <span>HUB PRO</span></div>
             <p>Acesse sua plataforma profissional</p>
             <div id="login-area">
                 <input type="email" id="login-email" placeholder="Seu e-mail profissional">
                 <input type="password" id="login-pass" placeholder="Sua senha">
-                <button id="btn-login" class="btn-main">Entrar no Sistema</button>
+                <button id="btn-login" class="btn-action">Entrar no Sistema</button>
                 <div class="divider"><span>OU</span></div>
-                <button id="btn-google" class="btn-google">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" alt="Google">
+                <button id="btn-google" class="btn-action btn-google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" alt="Google" width="20">
                     Entrar com Google
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="app-content" class="app-grid" style="display: none;">
+    <main id="app-content" class="app-grid" style="display: none;">
         
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -51,65 +48,83 @@
                     <span id="user-name">...</span>
                     <span id="user-plan" class="badge-free">FREE</span>
                 </div>
-                <button id="btn-logout" class="btn-exit"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                <button id="btn-logout" class="btn-exit" style="background:none; border:none; color:var(--danger); cursor:pointer; margin-top:10px;">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
             </div>
         </aside>
 
-        <main class="main-viewport">
+        <section class="main-viewport">
             
-            <section id="tab-calc" class="tab-content">
+            <section id="tab-dash" class="tab-content">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <p>Resumo da sua operação.</p>
+                </div>
+                <div class="metrics-grid">
+                    <div class="card metric-card"><span>Faturamento</span><h2 id="stat-money">R$ 0,00</h2></div>
+                    <div class="card metric-card"><span>Pedidos</span><h2 id="stat-pedidos">0</h2></div>
+                    <div class="card metric-card"><span>Ticket Médio</span><h2 id="stat-ticket">R$ 0,00</h2></div>
+                </div>
+                <div class="card">
+                    <h3>Vendas Recentes</h3>
+                    <div id="lista-recente"></div>
+                </div>
+            </section>
+
+            <section id="tab-calc" class="tab-content" style="display:none;">
                 <div class="section-header">
                     <h2>Calculadora de Precificação</h2>
                     <p>Defina preços que garantam seu lucro real.</p>
                 </div>
 
-                <div class="calc-container">
+                <div class="calc-container" style="display: grid; grid-template-columns: 1fr 350px; gap: 20px;">
                     <div class="calc-form card">
                         <div class="input-group full">
                             <label>Nome do Projeto / Produto</label>
                             <input type="text" id="c-nome-projeto" placeholder="Ex: Caneca Dia dos Pais">
                         </div>
                         
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>Custo Unitário (Matéria-prima)</label>
+                        <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <div class="input-group" style="flex: 1;">
+                                <label>Custo Unitário</label>
                                 <input type="number" id="c-unit" step="0.01" placeholder="0,00">
                             </div>
-                            <div class="input-group">
+                            <div class="input-group" style="flex: 1;">
                                 <label>Quantidade</label>
                                 <input type="number" id="c-qtd" value="1">
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>Tempo de Produção (Minutos)</label>
+                        <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <div class="input-group" style="flex: 1;">
+                                <label>Tempo Produção (Min)</label>
                                 <input type="number" id="c-tempo" placeholder="Ex: 15">
                             </div>
-                            <div class="input-group">
-                                <label>Valor da sua Hora R$</label>
+                            <div class="input-group" style="flex: 1;">
+                                <label>Valor Hora R$</label>
                                 <input type="number" id="c-hora" value="20">
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>Custo de Energia/Fixo R$</label>
+                        <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <div class="input-group" style="flex: 1;">
+                                <label>Energia/Fixo R$</label>
                                 <input type="number" id="c-energia" step="0.01" value="0.50">
                             </div>
-                            <div class="input-group">
-                                <label>Material Extra/Embalagem R$</label>
+                            <div class="input-group" style="flex: 1;">
+                                <label>Extra/Embalagem R$</label>
                                 <input type="number" id="c-extra" step="0.01" value="0">
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>Margem de Lucro Desejada (%)</label>
+                        <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <div class="input-group" style="flex: 1;">
+                                <label>Lucro Desejado (%)</label>
                                 <input type="number" id="c-margem" value="100">
                             </div>
-                            <div class="input-group">
-                                <label>Taxa de Cartão (%)</label>
+                            <div class="input-group" style="flex: 1;">
+                                <label>Taxa Cartão (%)</label>
                                 <input type="number" id="c-taxa" value="4.99">
                             </div>
                         </div>
@@ -124,51 +139,66 @@
 
                     <div class="calc-result-area card">
                         <h3>Resumo Financeiro</h3>
-                        <div class="result-box">
+                        <div class="result-box" style="margin: 20px 0; padding: 20px; background: #0f172a; border-radius: 12px;">
                             <span class="label">Preço Sugerido (Unidade)</span>
-                            <h2 id="res-total">R$ 0,00</h2>
+                            <h2 id="res-total" style="color: var(--accent);">R$ 0,00</h2>
                         </div>
                         <div class="result-details">
-                            <p id="res-lucro">Lucro Real: R$ 0,00</p>
+                            <p id="res-lucro" style="font-weight: bold;">Lucro Real: R$ 0,00</p>
                         </div>
-                        <button id="btn-save-calc" class="btn-secundary pro-only">Salvar no Firebase</button>
+                        <button id="btn-save-calc" class="btn-action pro-only" style="margin-top: 20px; background: var(--bg-main);">Salvar no Firebase</button>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-pdv" class="tab-content">
+            <section id="tab-fotos" class="tab-content" style="display:none;">
+                <div class="section-header">
+                    <h2>Gerador de Impressão A4</h2>
+                    <p>Organize suas fotos para impressão profissional.</p>
+                </div>
+                <div class="card" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <select id="f-formato" style="flex: 1;">
+                        <option value="p-padrao">Polaroid Padrão</option>
+                        <option value="p-cabine">Cabine (Tira)</option>
+                    </select>
+                    <input type="file" id="f-in" multiple accept="image/*" style="flex: 2;">
+                    <button id="btn-pdf" class="btn-action" style="flex: 1;">Gerar PDF</button>
+                </div>
+                <div id="canvas-a4" class="folha-a4"></div>
+            </section>
+
+            <section id="tab-pdv" class="tab-content" style="display:none;">
                 <div class="section-header">
                     <h2>PDV - Registrar Pedido</h2>
                 </div>
-                <div class="pdv-grid">
+                <div class="pdv-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="pdv-form card">
-                        <label>Cliente</label>
-                        <input type="text" id="p-cliente-nome" placeholder="Nome do cliente">
-                        <input type="text" id="p-cliente-contato" placeholder="WhatsApp">
+                        <label>Dados do Cliente</label>
+                        <input type="text" id="p-cliente-nome" placeholder="Nome do cliente" style="margin-bottom: 10px;">
+                        <input type="text" id="p-cliente-contato" placeholder="WhatsApp" style="margin-bottom: 20px;">
                         
-                        <hr>
+                        <hr style="border: 1px solid #334155; margin-bottom: 20px;">
                         
-                        <label>Adicionar Item ao Pedido</label>
-                        <input type="text" id="p-item-nome" placeholder="Produto">
-                        <input type="number" id="p-item-valor" placeholder="Valor R$">
-                        <button id="btn-add-item" class="btn-secundary">Adicionar ao Carrinho</button>
+                        <label>Adicionar Item</label>
+                        <input type="text" id="p-item-nome" placeholder="Produto" style="margin-bottom: 10px;">
+                        <input type="number" id="p-item-valor" placeholder="Valor R$" style="margin-bottom: 10px;">
+                        <button id="btn-add-item" class="btn-action" style="background: var(--bg-main);">Adicionar ao Carrinho</button>
                     </div>
 
                     <div class="pdv-cart card">
                         <h3>Carrinho de Compras</h3>
-                        <div id="pdv-lista-itens" class="cart-items">
-                            </div>
+                        <div id="pdv-lista-itens" class="cart-items" style="min-height: 150px; margin: 20px 0;"></div>
                         <div class="cart-footer">
-                            <div class="total-row">
+                            <div class="total-row" style="display: flex; justify-content: space-between; font-size: 1.2rem; margin-bottom: 15px;">
                                 <span>Total:</span>
                                 <strong id="cart-total">R$ 0,00</strong>
                             </div>
-                            <select id="p-metodo-pagamento">
+                            <select id="p-metodo-pagamento" style="margin-bottom: 10px;">
                                 <option value="pix">PIX</option>
                                 <option value="cartao">Cartão de Crédito</option>
                                 <option value="dinheiro">Dinheiro</option>
                             </select>
-                            <select id="p-status-pagamento">
+                            <select id="p-status-pagamento" style="margin-bottom: 20px;">
                                 <option value="pago">Já Pago</option>
                                 <option value="pendente">Pendente</option>
                             </select>
@@ -178,8 +208,8 @@
                 </div>
             </section>
 
-        </main>
-    </div>
+        </section>
+    </main>
 
     <script type="module" src="js/main.js"></script>
 </body>
