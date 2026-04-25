@@ -1,9 +1,10 @@
 export const fotos = {
     // Configurações de formatos (Medidas em mm para precisão gráfica)
+    // Ajustado para proporções reais de Polaroid (L x A)
     formatos: {
-        'p-padrao': { nome: 'Polaroid Padrão', w: 95, h: 100 },
+        'p-padrao': { nome: 'Polaroid Padrão', w: 90, h: 105 },
         'p-cabine': { nome: 'Cabine (Tira)', w: 50, h: 150 },
-        'p-quadrada': { nome: 'Quadrada', w: 100, h: 100 }
+        'p-quadrada': { nome: 'Quadrada', w: 100, h: 115 }
     },
 
     init() {
@@ -14,7 +15,8 @@ export const fotos = {
     bindEvents() {
         const input = document.getElementById('f-in');
         if (input) {
-            input.addEventListener('change', (e) => this.processarUpload(e.target.files));
+            // Substituímos o listener antigo para evitar duplicidade se o init for chamado mais de uma vez
+            input.onchange = (e) => this.processarUpload(e.target.files);
         }
     },
 
@@ -22,6 +24,8 @@ export const fotos = {
         const container = document.getElementById('canvas-a4');
         const formatoChave = document.getElementById('f-formato').value;
         const config = this.formatos[formatoChave];
+
+        if (!container) return;
 
         Array.from(files).forEach(file => {
             const reader = new FileReader();
@@ -33,30 +37,40 @@ export const fotos = {
     },
 
     renderizarMoldura(container, imgSrc, tipo, config) {
+        // 1. Criamos a Moldura (O papel branco)
         const div = document.createElement('div');
-        div.className = `moldura-saas ${tipo}`;
+        div.className = `moldura-foto ${tipo}`; // Usando a classe que corrigimos no style.css
         
-        // Estilização dinâmica via JS para garantir precisão de tamanho
+        // Estilização dinâmica para precisão milimétrica
         div.style.width = `${config.w}mm`;
         div.style.height = `${config.h}mm`;
         div.style.position = 'relative';
-        div.style.overflow = 'hidden';
-        div.style.border = '1px solid #ddd'; // Guia de corte suave
 
+        // 2. Lógica de Conteúdo Interno
         if (tipo === 'p-cabine') {
-            // Lógica de Cabine: Repete a mesma foto 3 vezes na tira automaticamente
+            // Estilo Tira de Cabine
+            div.style.padding = "5px"; 
             div.innerHTML = `
-                <div class="tira-container" style="display:flex; flex-direction:column; height:100%;">
-                    <div class="foto-slot"><img src="${imgSrc}"></div>
-                    <div class="foto-slot"><img src="${imgSrc}"></div>
-                    <div class="foto-slot"><img src="${imgSrc}"></div>
-                </div>
+                <div style="display:flex; flex-direction:column; gap:3px; height:100%;">
+                    <div style="flex:1; overflow:hidden;"><img src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div style="flex:1; overflow:hidden;"><img src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div style="flex:1; overflow:hidden;"><img src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div style="height:15px;"></div> </div>
             `;
         } else {
-            div.innerHTML = `<img src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;">`;
+            // Estilo Polaroid (Padrao e Quadrada)
+            // A imagem fica dentro da moldura que tem o padding definido no CSS
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.display = "block";
+            
+            div.appendChild(img);
         }
 
-        // Permitir remover foto com clique direito
+        // 3. Permitir remover foto com clique direito
         div.oncontextmenu = (e) => {
             e.preventDefault();
             if(confirm("Remover esta foto da folha?")) div.remove();
@@ -70,12 +84,14 @@ export const fotos = {
         const folha = document.getElementById('canvas-a4');
         const btn = document.getElementById('btn-pdf');
 
+        if (!folha) return;
+
         btn.innerText = "⏳ Gerando PDF...";
         btn.disabled = true;
 
         try {
             const canvas = await html2canvas(folha, {
-                scale: 3, // Alta qualidade para impressão
+                scale: 3, // Alta resolução
                 useCORS: true,
                 logging: false,
                 backgroundColor: "#ffffff"
