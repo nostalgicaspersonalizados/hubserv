@@ -1,59 +1,74 @@
-/* --- BASE DO HUB --- */
 :root {
     --primary: #6366f1;
-    --dark: #1e293b;
-    --bg: #f8fafc;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --border: #e2e8f0;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
-body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; }
+body { display: flex; height: 100vh; background: var(--light); color: var(--dark); }
 
-/* --- SIDEBAR --- */
-.sidebar { width: 260px; background: var(--dark); color: white; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-.nav-item { 
-    background: transparent; border: none; color: #94a3b8; padding: 12px; 
-    text-align: left; cursor: pointer; border-radius: 8px; font-weight: 600;
+/* SIDEBAR */
+.sidebar { width: 250px; background: var(--dark); color: white; padding: 25px; display: flex; flex-direction: column; }
+.brand { font-weight: 800; font-size: 22px; color: var(--primary); margin-bottom: 40px; text-align: center; }
+.nav-btn { 
+    background: transparent; border: none; color: #94a3b8; padding: 15px; 
+    text-align: left; cursor: pointer; border-radius: 10px; font-weight: 600; margin-bottom: 5px;
 }
-.nav-item.active { background: var(--primary); color: white; }
+.nav-btn.active { background: var(--primary); color: white; }
 
-/* --- ÁREA PRINCIPAL --- */
-.main { flex: 1; padding: 30px; overflow-y: auto; }
-.card { background: white; padding: 25px; border-radius: 12px; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 20px; }
+/* CONTENT AREA */
+.content { flex: 1; padding: 40px; overflow-y: auto; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.header-tab { margin-bottom: 30px; }
+.card { background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
 
-/* --- CORREÇÃO: ESTÚDIO DE FOTOS --- */
-#p-folhas { display: flex; flex-direction: column; gap: 20px; align-items: center; margin-top: 20px; }
-.folha-a4 { 
-    background: white; width: 210mm; min-height: 297mm; 
-    padding: 10mm; display: flex; flex-wrap: wrap; gap: 5px; 
-    box-shadow: 0 0 15px rgba(0,0,0,0.1); border: 1px solid #ddd;
-}
-/* ISSO AQUI RESOLVE AS FOTOS GIGANTES */
-.foto-container { 
-    position: relative; border: 1px solid #eee; overflow: hidden; 
-    background: #f1f5f9; display: flex; align-items: center; justify-content: center;
-}
-.foto-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* GRID SISTEMA */
+.grid-container { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-/* --- CORREÇÃO: CALCULADORA E PDV --- */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+/* INPUTS */
+.input-group { margin-bottom: 15px; }
+label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px; display: block; }
 input, select { 
-    width: 100%; padding: 10px; border: 1px solid #cbd5e1; 
-    border-radius: 6px; margin-top: 5px; font-size: 14px;
+    width: 100%; padding: 12px; border: 1px solid var(--border); 
+    border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s;
 }
-label { font-size: 12px; font-weight: bold; color: #64748b; }
+input:focus { border-color: var(--primary); ring: 2px var(--primary); }
 
-.btn { 
-    background: var(--primary); color: white; border: none; 
-    padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; 
+/* BOTÕES */
+.btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; }
+.btn-sec { background: #e2e8f0; color: var(--dark); border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+
+/* PREVIEW FOTOS (O CORAÇÃO DO ESTÚDIO) */
+.preview-container { 
+    margin-top: 30px; display: flex; justify-content: center; 
+    background: #f1f5f9; padding: 40px; border-radius: 12px;
 }
 
-/* --- TELA DE LOGIN --- */
-#auth-screen { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; 
+/* Moldes Reais */
+#foto-preview { 
+    background: white; padding: 10px 10px 35px 10px; /* Margem Polaroid */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
+    display: flex; flex-direction: column; overflow: hidden;
 }
-body.logged-in #auth-screen { display: none; }
 
-.aba { display: none; }
-.aba.ativa { display: block; }
+.polaroid-padrao { width: 190px; height: 200px; }
+.polaroid-instax { width: 110px; height: 160px; }
+.polaroid-mini { width: 140px; height: 180px; }
+.cabine { width: 100px; height: 300px; padding: 5px !important; }
+
+.img-box { width: 100%; height: 100%; overflow: hidden; background: #eee; }
+.img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+/* RESULTADOS CALCULADORA */
+.result-panel { background: #f8fafc; border: 2px dashed #cbd5e1; }
+.result-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; }
+
+@media (max-width: 900px) {
+    .grid-container { grid-template-columns: 1fr; }
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; }
+}
