@@ -1,6 +1,6 @@
 export const calculadora = {
     init() {
-        console.log("Calculadora SaaS: Pronta para processamento.");
+        console.log("Calculadora SaaS: Módulo pronto.");
     },
 
     formatarMoeda(valor) {
@@ -9,7 +9,7 @@ export const calculadora = {
 
     calcular() {
         try {
-            // Captura de Dados
+            // Captura de Dados dos novos campos
             const unitario = Number(document.getElementById('c-unit').value) || 0;
             const qtd = Number(document.getElementById('c-qtd').value) || 1;
             const extra = Number(document.getElementById('c-extra').value) || 0;
@@ -21,14 +21,14 @@ export const calculadora = {
             const taxaCartao = Number(document.getElementById('c-taxa').value) || 0;
             const desconto = Number(document.getElementById('c-desconto').value) || 0;
 
-            // Cálculos Base
+            // Cálculos Base (Produção)
             const maoDeObra = (valorHora / 60) * tempo;
             const custoTotalBase = (unitario * qtd) + extra + energia + maoDeObra;
 
-            // Preço com Margem
+            // Preço Sugerido com Margem
             let precoSugerido = custoTotalBase * (1 + (margemPercentual / 100));
 
-            // Ajuste de Taxa de Cartão (Markup sobre o preço de venda)
+            // Ajuste de Taxa de Cartão (Markup sobre o preço final de venda)
             if (taxaCartao > 0 && taxaCartao < 100) {
                 precoSugerido = precoSugerido / (1 - (taxaCartao / 100));
             }
@@ -36,26 +36,27 @@ export const calculadora = {
             const precoFinal = precoSugerido - desconto;
             const lucroReal = precoFinal - custoTotalBase;
 
-            // Atualização Visual
+            // Atualização Visual na UI
             document.getElementById('res-total').innerText = this.formatarMoeda(precoFinal);
             const elLucro = document.getElementById('res-lucro');
             elLucro.innerText = `Lucro Real: ${this.formatarMoeda(lucroReal)}`;
             elLucro.style.color = lucroReal > 0 ? "#10b981" : "#ef4444";
 
-            // Retorno do Payload para o Firebase
+            // Retorno do Objeto (Payload) preparado para o Firestore
             return {
-                userId: window.userUid || "default",
-                projeto: document.getElementById('c-nome-projeto').value || "Sem nome",
+                userId: window.userUid || "offline",
+                projeto: document.getElementById('c-nome-projeto').value || "Cálculo Avulso",
                 financeiro: {
-                    custoBase: custoTotalBase,
-                    venda: precoFinal,
-                    lucro: lucroReal,
+                    custoBase: Number(custoTotalBase.toFixed(2)),
+                    venda: Number(precoFinal.toFixed(2)),
+                    lucro: Number(lucroReal.toFixed(2)),
                     moeda: "BRL"
                 },
+                detalhes: { unitario, qtd, tempo, margemPercentual },
                 criadoEm: Date.now()
             };
         } catch (error) {
-            console.error("Erro no cálculo:", error);
+            console.error("Erro no cálculo profissional:", error);
         }
     }
 };
