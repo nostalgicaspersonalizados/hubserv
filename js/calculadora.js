@@ -8,23 +8,15 @@ export const calculadora = {
         const margem = parseFloat(document.getElementById('c-margem').value) || 0;
         const taxa = parseFloat(document.getElementById('c-taxa').value) || 0;
 
-        // Custo total: (Material) + (Mão de Obra) + Energia/Extras
         const maoDeObra = (tempo / 60) * hora;
         const custoTotalBase = (unit * qtd) + maoDeObra + energia;
-        
-        // Aplicação da margem de lucro
         let precoFinal = custoTotalBase * (1 + margem / 100);
         
-        // Ajuste para não perder lucro com a taxa do cartão
-        if (taxa > 0) {
-            precoFinal = precoFinal / (1 - (taxa / 100));
-        }
+        if (taxa > 0) precoFinal = precoFinal / (1 - (taxa / 100));
 
         const lucro = precoFinal - custoTotalBase;
 
         document.getElementById('res-total').innerText = precoFinal.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
         document.getElementById('res-lucro').innerText = `Lucro: ${lucro.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}`;
-        
-        return { precoFinal, lucro };
     }
 };
