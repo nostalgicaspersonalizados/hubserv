@@ -6,28 +6,14 @@ export const pdv = {
         const cliente = document.getElementById('p-cliente').value;
         const item = document.getElementById('p-item').value;
         const valor = document.getElementById('p-val').value;
-
-        if (!cliente || !item || !valor) return alert("Preencha todos os campos!");
-
-        const pedido = {
-            cliente,
-            item,
-            valor: parseFloat(valor),
-            data: new Date(),
-            status: "pendente"
-        };
+        if (!cliente || !item || !valor) return alert("Preencha tudo!");
 
         try {
-            // Salva no Firebase do usuário
-            await addDoc(collection(db, `usuarios/${auth.currentUser.uid}/pedidos`), pedido);
-            
-            // Link de WhatsApp Automático
-            const msg = encodeURIComponent(`Olá ${cliente}! Seu pedido de ${item} foi registrado. Valor: R$ ${valor}`);
+            await addDoc(collection(db, `usuarios/${auth.currentUser.uid}/pedidos`), {
+                cliente, item, valor: parseFloat(valor), data: new Date()
+            });
+            const msg = encodeURIComponent(`Olá ${cliente}, seu pedido de ${item} (R$ ${valor}) foi recebido!`);
             window.open(`https://wa.me/?text=${msg}`);
-            
-            alert("Pedido salvo e enviado!");
-        } catch (e) {
-            console.error("Erro ao salvar pedido:", e);
-        }
+        } catch (e) { console.error(e); }
     }
 };
