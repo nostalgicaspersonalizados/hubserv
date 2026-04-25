@@ -3,119 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nostálgicas Hub | Gráfica Pro</title>
-    
+    <title>Nostálgicas Hub | Oficial</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/bundle.js"></script>
-    
-    <link rel="stylesheet" href="estilo.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <aside class="sidebar">
         <div class="brand">NOSTÁLGICAS</div>
         <nav>
-            <button class="nav-item active" onclick="tab('calc')">💰 Calculadora</button>
-            <button class="nav-item" onclick="tab('fotos')">🖼️ Gerador Fotos</button>
-            <button class="nav-item" onclick="tab('pdv')">🧾 PDV / Recibo</button>
-            <button class="nav-item" onclick="tab('bg')">✂️ Remover Fundo</button>
+            <button class="nav-btn active" onclick="showTab('calc')">💰 Calculadora</button>
+            <button class="nav-btn" onclick="showTab('fotos')">🖼️ Gerador Fotos</button>
+            <button class="nav-btn" onclick="showTab('pdv')">🧾 PDV / Recibo</button>
+            <button class="nav-btn" onclick="showTab('bg')">✂️ Remover Fundo</button>
         </nav>
     </aside>
 
-    <main class="main">
-        <section id="tab-calc" class="aba ativa">
+    <main class="content">
+        <section id="tab-calc" class="tab-content active">
             <div class="card">
-                <h2>Calculadora de Preços Inteligente</h2>
+                <h2>💰 Precificação de Produtos</h2>
                 <div class="grid-2">
-                    <div class="form-grid">
-                        <div class="field"><label>Custo Matéria-Prima (R$)</label><input type="number" id="c-unit" value="0"></div>
-                        <div class="field"><label>Quantidade</label><input type="number" id="c-qtd" value="1"></div>
-                        <div class="field"><label>Tempo de Produção (Min)</label><input type="number" id="c-tempo" value="0"></div>
-                        <div class="field"><label>Valor da sua Hora (R$)</label><input type="number" id="c-hora" value="20"></div>
-                        <div class="field"><label>Margem de Lucro (%)</label><input type="number" id="c-margem" value="100"></div>
-                        <div class="field"><label>Taxa Cartão (%)</label><input type="number" id="c-taxa" value="0"></div>
-                        <button class="btn-p" onclick="calcularPreco()">CALCULAR AGORA</button>
+                    <div class="form">
+                        <label>Custo Unitário (R$)</label><input type="number" id="c-unit" value="0">
+                        <label>Quantidade</label><input type="number" id="c-qtd" value="1">
+                        <label>Tempo (Minutos)</label><input type="number" id="c-tempo" value="10">
+                        <label>Margem Lucro (%)</label><input type="number" id="c-margem" value="100">
+                        <button class="btn-p" onclick="calcularPreco()">CALCULAR</button>
                     </div>
-                    <div class="result-box">
-                        <p>PREÇO FINAL SUGERIDO</p>
+                    <div class="res-display">
+                        <p>PREÇO FINAL</p>
                         <h1 id="res-total">R$ 0,00</h1>
-                        <small id="res-unit">Unitário: R$ 0,00</small>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="tab-fotos" class="aba">
+        <section id="tab-fotos" class="tab-content">
             <div class="card">
-                <div class="tool-header">
+                <div class="controls">
                     <select id="f-formato" onchange="mudarMolde()">
-                        <option value="p-padrao">Polaroid Padrão (9,5x10)</option>
-                        <option value="p-instax">Polaroid Instax (5,5x8)</option>
-                        <option value="p-mini">Polaroid Mini (7x9)</option>
+                        <option value="p-padrao">Polaroid Padrão</option>
+                        <option value="p-instax">Instax</option>
                         <option value="p-cabine">Cabine (5x15)</option>
                     </select>
                     <input type="file" id="f-input" hidden>
                     <button class="btn-s" onclick="document.getElementById('f-input').click()">📂 Subir Imagem</button>
                     <button class="btn-p" onclick="baixarPNG()">📥 Baixar PNG</button>
                 </div>
-                <div class="preview-area">
-                    <div id="molde-print" class="p-padrao">
-                        <div class="img-container"><img id="foto-view" src=""></div>
-                        <div id="cabine-slots" style="display:none">
-                            <div class="img-container"><img class="foto-clone" src=""></div>
-                            <div class="img-container"><img class="foto-clone" src=""></div>
+                <div id="print-area">
+                    <div id="molde" class="p-padrao">
+                        <div class="photo-box"><img id="main-img" src=""></div>
+                        <div id="cabine-extra" style="display:none">
+                            <div class="photo-box"><img class="clone" src=""></div>
+                            <div class="photo-box"><img class="clone" src=""></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="tab-pdv" class="aba">
+        <section id="tab-pdv" class="tab-content">
             <div class="card">
-                <div class="grid-2">
-                    <div class="form-grid">
-                        <input type="text" id="r-cli" placeholder="Nome do Cliente">
-                        <input type="text" id="r-tel" placeholder="WhatsApp">
-                        <input type="text" id="r-item" placeholder="Produto">
-                        <div class="grid-2">
-                            <input type="number" id="r-q" placeholder="Qtd">
-                            <input type="number" id="r-v" placeholder="V. Unit">
-                        </div>
-                        <button class="btn-p" onclick="gerarRecibo()">GERAR E ENVIAR</button>
-                    </div>
-                    <div id="recibo-html" class="recibo-preview">
-                        <h3>NOSTÁLGICAS</h3>
-                        <p id="v-cli">Cliente: ---</p>
-                        <p id="v-prod">Item: ---</p>
-                        <h2 id="v-total">R$ 0,00</h2>
-                    </div>
+                <input type="text" id="r-cli" placeholder="Nome do Cliente">
+                <input type="text" id="r-item" placeholder="Produto">
+                <input type="number" id="r-val" placeholder="Valor R$">
+                <button class="btn-p" onclick="gerarRecibo()">GERAR RECIBO</button>
+                <div id="recibo-view" style="margin-top:20px; border:1px solid #eee; padding:20px;">
+                    <h3>NOSTÁLGICAS HUB</h3>
+                    <p id="v-txt">Aguardando dados...</p>
                 </div>
             </div>
         </section>
 
-        <section id="tab-bg" class="aba">
-            <div class="card text-center">
-                <h2>IA Removedora de Fundo</h2>
+        <section id="tab-bg" class="tab-content">
+            <div class="card">
                 <input type="file" id="bg-in" hidden>
-                <button class="btn-p" onclick="document.getElementById('bg-in').click()">Escolher Foto</button>
-                <div id="bg-status" style="margin-top:15px;"></div>
-                <canvas id="bg-canvas" style="max-width:100%; border-radius:10px; margin-top:20px;"></canvas>
+                <button class="btn-p" onclick="document.getElementById('bg-in').click()">Remover Fundo IA</button>
+                <div id="bg-status"></div>
+                <canvas id="bg-canvas" style="max-width:100%; margin-top:20px;"></canvas>
             </div>
         </section>
     </main>
 
-    <script src="precessor.js"></script>
-    <script src="estudio.js"></script>
-    <script src="pdv.js"></script>
-    <script src="bg-remover.js"></script>
+    <script src="script.js"></script>
     <script type="module" src="auth.js"></script>
     <script>
-        function tab(id) {
-            document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            document.getElementById('tab-'+id).classList.add('ativa');
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-'+id).classList.add('active');
             event.target.classList.add('active');
         }
     </script>
