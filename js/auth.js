@@ -3,12 +3,14 @@ import {
     signInWithEmailAndPassword, 
     onAuthStateChanged, 
     GoogleAuthProvider, 
-    signInWithPopup 
+    signInWithPopup,
+    signOut 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 export function initAuth() {
     const btnLogin = document.getElementById('btn-login');
-    const btnGoogle = document.getElementById('btn-google'); // Adicionado para suportar o botão do seu HTML
+    const btnGoogle = document.getElementById('btn-google');
+    const btnLogout = document.getElementById('btn-logout');
 
     // 1. Login com E-mail e Senha
     if (btnLogin) {
@@ -27,7 +29,6 @@ export function initAuth() {
                 alert("Sucesso! Entrando no sistema...");
             } catch (error) {
                 console.error("Erro detalhado:", error.code);
-                // ALERTAS DE ERRO COMUNS
                 if (error.code === 'auth/invalid-credential') {
                     alert("E-mail ou senha incorretos.");
                 } else if (error.code === 'auth/user-not-found') {
@@ -41,7 +42,7 @@ export function initAuth() {
         };
     }
 
-    // 2. Login com Google (Necessário para o seu botão btn-google funcionar)
+    // 2. Login com Google
     if (btnGoogle) {
         btnGoogle.onclick = async () => {
             const provider = new GoogleAuthProvider();
@@ -55,47 +56,58 @@ export function initAuth() {
         };
     }
 
-    // 3. Observador de Estado (Controla a visibilidade do App)
+    // 3. Observador de Estado (Controla o Acesso e o Selo PRO)
     onAuthStateChanged(auth, (user) => {
         const overlay = document.getElementById('auth-overlay');
         const appContent = document.getElementById('app-content');
+        const userBadge = document.getElementById('user-plan-badge');
 
         if (user) {
             console.log("✅ Login detectado para:", user.email);
             
-            // Variáveis globais para uso nos outros módulos (PDV, Calculadora)
+            // Define permissões globais para liberar as ferramentas (Calculadora, BG Remover, etc)
             window.userUid = user.uid;
             window.userPlan = 'pro'; 
 
+            // Atualiza a Interface do Usuário
             if (overlay && appContent) {
-                overlay.style.display = 'none'; // Esconde o login
-                appContent.style.display = 'grid'; // Mostra o sistema conforme seu CSS app-grid
+                overlay.style.display = 'none';
+                appContent.style.display = 'grid';
                 
-                // Atualiza o nome do usuário na sidebar se os elementos existirem
+                // Nome do usuário
                 const userNameEl = document.getElementById('user-name');
                 if (userNameEl) {
                     userNameEl.innerText = user.displayName || user.email.split('@')[0];
                 }
 
-                // Força a abertura da primeira aba (Dashboard)
+                // Corrige o selo de "FREE" para "PRO"
+                if (userBadge) {
+                    userBadge.innerText = "PRO";
+                    userBadge.style.background = "var(--success)"; // Garante a cor verde de sucesso
+                }
+
+                // Força a abertura da aba inicial
                 if (typeof window.tab === 'function') {
                     window.tab('dash');
                 }
             }
         } else {
             console.log("❌ Nenhum usuário logado.");
+            window.userUid = null;
+            window.userPlan = 'free';
+
             if (overlay) overlay.style.display = 'flex';
             if (appContent) appContent.style.display = 'none';
         }
     });
 
-    // 4. Lógica de Logout (Para o botão btn-logout da sua sidebar)
-    const btnLogout = document.getElementById('btn-logout');
+    // 4. Lógica de Logout
     if (btnLogout) {
         btnLogout.onclick = async () => {
             try {
-                await auth.signOut();
+                await signOut(auth);
                 console.log("Usuário deslogado.");
+                location.reload(); // Recarrega para garantir limpeza de cache/estado
             } catch (error) {
                 console.error("Erro ao deslogar:", error);
             }
