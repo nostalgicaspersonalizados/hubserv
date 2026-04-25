@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     console.log("🚀 Nostálgicas Hub Pro: Orquestrador carregado.");
 });
+// Gatilho para Exportar PDF
+if (e.target.id === 'btn-pdf') {
+    const { fotos } = await import('./fotos.js');
+    fotos.exportarPDF();
+}
 
 // 2. Navegação Global entre Abas (SaaS Multi-ferramentas)
 window.tab = async (id) => {
@@ -32,6 +37,10 @@ window.tab = async (id) => {
             const { pdv } = await import('./pdv.js');
             pdv.init();
             break;
+         case 'fotos':
+            const { fotos } = await import('./fotos.js');
+            fotos.init();
+            break;     
     }
 };
 
