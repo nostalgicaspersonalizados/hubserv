@@ -3,23 +3,39 @@ import { signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstati
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 export function initAuth() {
-    document.getElementById('btn-google').onclick = () => signInWithPopup(auth, provider);
-    document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
+    const btnGoogle = document.getElementById('btn-google');
+    if(btnGoogle) {
+        btnGoogle.onclick = () => signInWithPopup(auth, provider).catch(err => console.error(err));
+    }
+
+    const btnLogout = document.getElementById('btn-logout');
+    if(btnLogout) {
+        btnLogout.onclick = () => signOut(auth).then(() => location.reload());
+    }
 
     onAuthStateChanged(auth, async (user) => {
+        const overlay = document.getElementById('auth-overlay');
+        const appContainer = document.querySelector('.app-container');
+
         if (user) {
-            document.getElementById('auth-overlay').style.display = 'none';
-            document.querySelector('.app-container').style.display = 'flex';
+            if(overlay) overlay.style.display = 'none';
+            if(appContainer) appContainer.style.display = 'flex';
             document.getElementById('user-name').innerText = user.displayName;
             
             const userRef = doc(db, "usuarios", user.uid);
             const snap = await getDoc(userRef);
+            
             if (!snap.exists()) {
-                await setDoc(userRef, { nome: user.displayName, plano: "free", criadoEm: new Date() });
+                await setDoc(userRef, { nome: user.displayName, email: user.email, plano: "free", criadoEm: new Date() });
             }
+            
             const plano = snap.exists() ? snap.data().plano : "free";
-            document.getElementById('user-plan').innerText = plano.toUpperCase();
-            window.userPlano = plano; // Variável global para controle de funções
+            const planBadge = document.getElementById('user-plan');
+            if(planBadge) planBadge.innerText = plano.toUpperCase();
+            window.userPlano = plano;
+        } else {
+            if(overlay) overlay.style.display = 'flex';
+            if(appContainer) appContainer.style.display = 'none';
         }
     });
 }
