@@ -1,28 +1,30 @@
-document.getElementById('bg-in').onchange = async (e) => {
-    const status = document.getElementById('bg-status');
-    const canvas = document.getElementById('bg-canvas');
-    const file = e.target.files[0];
+const bgInput = document.getElementById('bg-in');
+const canvas = document.getElementById('bg-canvas');
+const status = document.getElementById('bg-status');
 
-    if (!file) return;
+if (bgInput) {
+    bgInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    status.innerText = "⏳ Removendo fundo com IA... aguarde.";
+        status.innerText = "Processando...";
 
-    try {
-        const blob = await imglyRemoveBackground(file);
-        const url = URL.createObjectURL(blob);
-        const img = new Image();
-        
-        img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-            status.innerText = "✅ Fundo removido!";
-        };
-        img.src = url;
-    } catch (error) {
-        status.innerText = "❌ Erro ao processar imagem.";
-        console.error(error);
-    }
-};
+        try {
+            const blob = await removeBackground(file);
+            const img = new Image();
+            img.src = URL.createObjectURL(blob);
+
+            img.onload = () => {
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                ctx.drawImage(img, 0, 0);
+                status.innerText = "Concluído!";
+            };
+
+        } catch (err) {
+            status.innerText = "Erro ao remover fundo (verifique internet)";
+        }
+    });
+}
