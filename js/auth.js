@@ -29,9 +29,20 @@ export function initAuth() {
     }
 
     onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById('auth-overlay').style.display = 'none';
-            document.querySelector('.app-container').style.display = 'flex';
+    if (user) {
+        console.log("✅ Login detectado para:", user.email);
+        
+        const overlay = document.getElementById('auth-overlay');
+        const appContent = document.getElementById('app-content');
+
+        if (overlay && appContent) {
+            overlay.style.display = 'none'; // Esconde o login
+            appContent.style.display = 'grid'; // Mostra o sistema (use 'grid' ou 'block' conforme seu CSS)
+            window.tab('dash'); // Força a abertura da primeira aba
         }
-    });
+    } else {
+        console.log("❌ Nenhum usuário logado.");
+        document.getElementById('auth-overlay').style.display = 'flex';
+    }
+});
 }
