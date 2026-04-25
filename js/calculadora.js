@@ -1,22 +1,61 @@
 export const calculadora = {
+    init() {
+        console.log("Calculadora SaaS: Pronta para processamento.");
+    },
+
+    formatarMoeda(valor) {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    },
+
     calcular() {
-        const unit = parseFloat(document.getElementById('c-unit').value) || 0;
-        const qtd = parseFloat(document.getElementById('c-qtd').value) || 1;
-        const tempo = parseFloat(document.getElementById('c-tempo').value) || 0;
-        const hora = parseFloat(document.getElementById('c-hora').value) || 0;
-        const energia = parseFloat(document.getElementById('c-energia').value) || 0;
-        const margem = parseFloat(document.getElementById('c-margem').value) || 0;
-        const taxa = parseFloat(document.getElementById('c-taxa').value) || 0;
+        try {
+            // Captura de Dados
+            const unitario = Number(document.getElementById('c-unit').value) || 0;
+            const qtd = Number(document.getElementById('c-qtd').value) || 1;
+            const extra = Number(document.getElementById('c-extra').value) || 0;
+            const energia = Number(document.getElementById('c-energia').value) || 0;
+            const tempo = Number(document.getElementById('c-tempo').value) || 0;
+            const valorHora = Number(document.getElementById('c-hora').value) || 0;
+            
+            const margemPercentual = Number(document.getElementById('c-margem').value) || 0;
+            const taxaCartao = Number(document.getElementById('c-taxa').value) || 0;
+            const desconto = Number(document.getElementById('c-desconto').value) || 0;
 
-        const maoDeObra = (tempo / 60) * hora;
-        const custoTotalBase = (unit * qtd) + maoDeObra + energia;
-        let precoFinal = custoTotalBase * (1 + margem / 100);
-        
-        if (taxa > 0) precoFinal = precoFinal / (1 - (taxa / 100));
+            // Cálculos Base
+            const maoDeObra = (valorHora / 60) * tempo;
+            const custoTotalBase = (unitario * qtd) + extra + energia + maoDeObra;
 
-        const lucro = precoFinal - custoTotalBase;
+            // Preço com Margem
+            let precoSugerido = custoTotalBase * (1 + (margemPercentual / 100));
 
-        document.getElementById('res-total').innerText = precoFinal.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
-        document.getElementById('res-lucro').innerText = `Lucro: ${lucro.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}`;
+            // Ajuste de Taxa de Cartão (Markup sobre o preço de venda)
+            if (taxaCartao > 0 && taxaCartao < 100) {
+                precoSugerido = precoSugerido / (1 - (taxaCartao / 100));
+            }
+
+            const precoFinal = precoSugerido - desconto;
+            const lucroReal = precoFinal - custoTotalBase;
+
+            // Atualização Visual
+            document.getElementById('res-total').innerText = this.formatarMoeda(precoFinal);
+            const elLucro = document.getElementById('res-lucro');
+            elLucro.innerText = `Lucro Real: ${this.formatarMoeda(lucroReal)}`;
+            elLucro.style.color = lucroReal > 0 ? "#10b981" : "#ef4444";
+
+            // Retorno do Payload para o Firebase
+            return {
+                userId: window.userUid || "default",
+                projeto: document.getElementById('c-nome-projeto').value || "Sem nome",
+                financeiro: {
+                    custoBase: custoTotalBase,
+                    venda: precoFinal,
+                    lucro: lucroReal,
+                    moeda: "BRL"
+                },
+                criadoEm: Date.now()
+            };
+        } catch (error) {
+            console.error("Erro no cálculo:", error);
+        }
     }
 };
