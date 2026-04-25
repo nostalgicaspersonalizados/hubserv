@@ -1,26 +1,31 @@
-const fInput = document.getElementById('f-input');
-const fImg = document.getElementById('foto-view');
-const molde = document.getElementById('molde-print');
-
 function mudarMolde() {
-    const s = document.getElementById('f-formato').value;
-    molde.className = s;
-    document.getElementById('cabine-slots').style.display = (s === 'p-cabine') ? 'contents' : 'none';
+    const formato = document.getElementById('f-formato').value;
+    const molde = document.getElementById('molde');
+    const cabineExtra = document.getElementById('cabine-extra');
+
+    molde.className = formato;
+    
+    if (formato === 'p-cabine') {
+        cabineExtra.style.display = 'contents';
+    } else {
+        cabineExtra.style.display = 'none';
+    }
 }
 
-fInput.onchange = e => {
+document.getElementById('f-input').onchange = e => {
     const reader = new FileReader();
     reader.onload = ev => {
-        fImg.src = ev.target.result;
-        document.querySelectorAll('.foto-clone').forEach(i => i.src = ev.target.result);
+        document.getElementById('main-img').src = ev.target.result;
+        document.querySelectorAll('.clone').forEach(img => img.src = ev.target.result);
     };
     reader.readAsDataURL(e.target.files[0]);
 };
 
 async function baixarPNG() {
-    const canvas = await html2canvas(molde, { scale: 3 });
-    const a = document.createElement('a');
-    a.download = 'nostalgicas-print.png';
-    a.href = canvas.toDataURL();
-    a.click();
+    const area = document.getElementById('molde');
+    const canvas = await html2canvas(area, { scale: 3, useCORS: true });
+    const link = document.createElement('a');
+    link.download = 'nostalgicas-foto.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
 }
