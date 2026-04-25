@@ -11,16 +11,15 @@
     
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
-    
 </head>
-<body>
 <body id="main-body">
+
 <div id="auth-screen">
     <div class="card" style="width: 320px; text-align: center;">
         <h2 style="margin-bottom: 20px;">Nostálgicas Hub</h2>
-        <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom: 10px; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
-        <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom: 15px; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
-        <button class="btn" onclick="handleAuth('login')">ENTRAR</button>
+        <input type="email" id="auth-email" placeholder="E-mail">
+        <input type="password" id="auth-senha" placeholder="Senha" style="margin-top:10px;">
+        <button class="btn" onclick="handleAuth('login')" style="margin-top:15px; width:100%">ENTRAR</button>
         <p id="auth-msg" style="color:red; font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
@@ -55,189 +54,122 @@
     </div>
 
     <div id="aba-calc" class="aba">
-    <div class="card">
-        <h2>💰 Calculadora de Custos Profissional</h2>
-        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px;">
-            
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                
-                <div id="materiais-lista">
-                    <label><strong>Materiais / Insumos</strong></label>
-                    <div class="material-row" style="display: flex; gap: 5px; margin-bottom: 8px;">
-                        <input type="text" placeholder="Item (Ex: Papel Fotográfico)" class="mat-nome">
-                        <input type="number" placeholder="R$" class="mat-valor" style="width: 100px;">
-                        <button class="btn" onclick="addMaterialField()" style="width: 40px; background: var(--dark)">+</button>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div>
-                        <label>Custos Fixos (R$)</label>
-                        <input type="number" id="calc-fixo" placeholder="Luz, MEI, etc">
-                    </div>
-                    <div>
-                        <label>Horas de Trabalho/Mês</label>
-                        <input type="number" id="calc-horas-mes" value="160">
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div>
-                        <label>Taxas Cartão/Plataforma (%)</label>
-                        <input type="number" id="calc-taxa" placeholder="Ex: 5">
-                    </div>
-                    <div>
-                        <label>Tempo de Produção</label>
-                        <div style="display: flex; gap: 5px;">
-                            <input type="number" id="t-hh" placeholder="HH" value="0">
-                            <input type="number" id="t-mm" placeholder="MM" value="0">
+        <div class="card">
+            <h2>💰 Calculadora de Custos</h2>
+            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px;">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div id="materiais-lista">
+                        <label><strong>Materiais / Insumos</strong></label>
+                        <div class="material-row" style="display: flex; gap: 5px; margin-bottom: 8px;">
+                            <input type="text" placeholder="Papel, Tinta, etc" class="mat-nome">
+                            <input type="number" placeholder="R$" class="mat-valor" style="width: 100px;">
+                            <button class="btn" onclick="addMaterialField()" style="width: 40px; background: var(--dark)">+</button>
                         </div>
                     </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div>
-                        <label>Margem de Lucro (%)</label>
-                        <input type="number" id="calc-margem" value="100">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div><label>Custos Fixos (R$)</label><input type="number" id="calc-fixo"></div>
+                        <div><label>Horas/Mês</label><input type="number" id="calc-horas-mes" value="160"></div>
                     </div>
-                    <div>
-                        <label>Lucro Desejado (R$)</label>
-                        <input type="number" id="calc-lucro-rs" placeholder="Opcional">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div><label>Margem (%)</label><input type="number" id="calc-margem" value="100"></div>
+                        <div><label>Tempo (HH:MM)</label>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="number" id="t-hh" value="0">
+                                <input type="number" id="t-mm" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="processarCalculo()" style="flex: 2;">CALCULAR</button>
+                        <button class="btn" onclick="copiarCalculo()" style="flex: 1; background: var(--dark);">📋 COPIAR</button>
                     </div>
                 </div>
-
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn" onclick="processarCalculo()" style="flex: 2;">CALCULAR PREÇO FINAL</button>
-                    <button class="btn" onclick="copiarCalculo()" style="flex: 1; background: var(--dark);">📋 COPIAR</button>
+                <div id="resultado-box" style="background: #f1f5f9; padding: 25px; border-radius: 15px; border: 2px dashed #cbd5e1;">
+                    <h3>Resumo</h3>
+                    <div id="detalhes-final">Aguardando dados...</div>
+                    <h1 id="preco-venda-final" style="color: var(--primary); font-size: 2rem;">R$ 0,00</h1>
                 </div>
             </div>
-
-            <div id="resultado-box" style="background: var(--bg); padding: 25px; border-radius: 15px; border: 2px dashed #cbd5e1;">
-                <h3 style="margin-top: 0;">Resumo do Cálculo</h3>
-                <div id="detalhes-final" style="font-size: 14px; line-height: 1.6; color: #475569;">
-                    Aguardando dados...
-                </div>
-                <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 15px 0;">
-                <span style="font-size: 12px; font-weight: bold; color: #64748b;">VALOR SUGERIDO DE VENDA</span>
-                <h1 id="preco-venda-final" style="color: var(--primary); font-size: 2.5rem; margin: 5px 0;">R$ 0,00</h1>
-            </div>
-
         </div>
     </div>
-</div>
 
     <div id="aba-pdv" class="aba">
         <div class="card">
-            <h2>🧾 Emissor de Recibo Rápido</h2>
+            <h2>🧾 Recibo Rápido</h2>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
                 <div>
-                    <input type="text" id="pdv-cliente" placeholder="Nome do Cliente" style="margin-bottom: 10px;">
-                    <div style="display: flex; gap: 5px; margin-bottom: 20px;">
-                        <input type="text" id="pdv-item" placeholder="Produto (Ex: Caneca)">
-                        <input type="number" id="pdv-valor" placeholder="R$" style="width: 100px;">
-                        <button class="btn" onclick="adicionarItem()" style="width: 50px;">+</button>
+                    <input type="text" id="pdv-cliente" placeholder="Nome do Cliente">
+                    <div style="display: flex; gap: 5px; margin: 10px 0;">
+                        <input type="text" id="pdv-item" placeholder="Produto">
+                        <input type="number" id="pdv-valor" placeholder="R$" style="width: 80px;">
+                        <button class="btn" onclick="adicionarItem()">+</button>
                     </div>
-                    <button class="btn" style="background: var(--dark); width: 100%;" onclick="gerarReciboPDF()">📄 GERAR RECIBO PDF</button>
+                    <button class="btn" style="background: var(--dark); width: 100%;" onclick="gerarReciboPDF()">📄 GERAR PDF</button>
                 </div>
-                <div id="recibo-preview" style="background: #fff; border: 1px dashed #ccc; padding: 20px; min-height: 200px;">
-                    <h3 style="text-align: center; margin-top: 0;">NOSTÁLGICAS</h3>
-                    <p id="preview-cliente" style="font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Cliente: ---</p>
-                    <table id="tabela-itens" style="width: 100%; font-size: 13px; text-align: left; border-collapse: collapse;">
-                        <thead><tr style="border-bottom: 1px solid #eee;"><th>Item</th><th>Valor</th></tr></thead>
+                <div id="recibo-preview" style="background: #fff; border: 1px dashed #ccc; padding: 15px;">
+                    <h3 style="text-align: center;">NOSTÁLGICAS</h3>
+                    <p id="preview-cliente">Cliente: ---</p>
+                    <table id="tabela-itens" style="width: 100%; font-size: 13px;">
+                        <thead><tr><th>Item</th><th>Valor</th></tr></thead>
                         <tbody></tbody>
                     </table>
-                    <div style="margin-top: 15px; text-align: right; font-weight: bold;">
-                        Total: <span id="preview-total">R$ 0,00</span>
-                    </div>
+                    <div style="text-align: right; font-weight: bold; margin-top: 10px;">Total: <span id="preview-total">R$ 0,00</span></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="aba-bg-rem" class="aba">
+        <div class="card" style="text-align: center;">
+            <h2>✂️ Remover Fundo</h2>
+            <input type="file" id="f-remove" accept="image/*" hidden onchange="processarRemocao()">
+            <button class="btn" onclick="document.getElementById('f-remove').click()">📂 Selecionar Imagem</button>
+            <div id="loading-remove" style="display: none; margin-top: 20px;"><div class="spinner"></div><p>Removendo fundo...</p></div>
+            <div id="result-area" style="display: none; margin-top: 20px;">
+                <canvas id="canvas-remove" style="max-width: 100%; background: url('https://www.transparenttextures.com/patterns/checkerboard.png');"></canvas>
+                <br><button class="btn" style="background: var(--dark); margin-top: 10px;" onclick="baixarImagemSemFundo()">💾 Baixar PNG</button>
             </div>
         </div>
     </div>
 </main>
-    <div id="aba-bg-rem" class="aba">
-    <div class="card">
-        <h2>✂️ Removedor de Fundo Inteligente</h2>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-            Dica: Use fotos com fundo contrastante para melhores resultados. O processamento é feito no seu computador.
-        </p>
-        
-        <div style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
-            <input type="file" id="f-remove" accept="image/*" style="display: none;" onchange="processarRemocao()">
-            <button class="btn" onclick="document.getElementById('f-remove').click()" style="width: 100%; max-width: 300px;">
-                📂 Selecionar Imagem
-            </button>
-
-            <div id="loading-remove" style="display: none; text-align: center;">
-                <div class="spinner"></div>
-                <p>Removendo fundo... Isso pode levar alguns segundos.</p>
-            </div>
-
-            <div id="result-area" style="display: none; text-align: center;">
-                <canvas id="canvas-remove" style="max-width: 100%; border: 1px solid #ddd; border-radius: 8px; background: url('https://www.transparenttextures.com/patterns/checkerboard.png');"></canvas>
-                <br><br>
-                <button class="btn" style="background: var(--dark);" onclick="baixarImagemSemFundo()">💾 Baixar em PNG</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div id="editor-modal">
-    <div class="modal-content">
-        <h3 style="margin-top: 0;">Ajustar Enquadramento</h3>
-        <div id="crop-area">
-            <img src="" id="crop-img">
+    <div class="modal-content" style="background:white; padding:20px; border-radius:12px; width:540px; margin: auto; position:relative; top:50%; transform:translateY(-50%);">
+        <h3>Ajustar Foto</h3>
+        <div id="crop-area" style="width:500px; height:500px; background:#000; overflow:hidden; position:relative;">
+            <img src="" id="crop-img" style="position:absolute; cursor:move;">
         </div>
-        <label style="font-size: 12px; font-weight: bold; color: #64748b;">ZOOM</label>
-        <input type="range" id="zoom-ctrl" min="0.1" max="3" step="0.01" value="0.8">
+        <input type="range" id="zoom-ctrl" min="0.1" max="3" step="0.01" value="0.8" style="width:100%; margin:15px 0;">
         <div style="display: flex; gap: 10px;">
             <button class="btn" style="background:#64748b; flex: 1;" onclick="closeEditor()">CANCELAR</button>
-            <button class="btn" style="flex: 1;" onclick="saveCrop()">SALVAR AJUSTE</button>
+            <button class="btn" style="flex: 1;" onclick="saveCrop()">SALVAR</button>
         </div>
     </div>
 </div>
 
-<script type="module" src="auth.js"></script>
-<script type="module" src="estudio.js"></script>
-<script type="module" src="precificador.js"></script>
-<script type="module" src="pdv.js"></script>
-
-<script>
-    function tab(id, el) {
-    console.log("Trocando para a aba:", id); // Isso ajuda a ver se o clique funciona
-
-    // 1. Esconde TODAS as abas de uma vez
-    const todasAbas = document.querySelectorAll('.aba');
-    todasAbas.forEach(aba => {
-        aba.classList.remove('ativa');
-        aba.style.display = 'none'; // Força o desaparecimento
-    });
-
-    // 2. Remove o destaque de todos os botões do menu
-    const todosBotoes = document.querySelectorAll('.nav-item');
-    todosBotoes.forEach(btn => btn.classList.remove('active'));
-
-    // 3. Mostra APENAS a aba que você clicou
-    const abaAlvo = document.getElementById('aba-' + id);
-    if (abaAlvo) {
-        abaAlvo.classList.add('ativa');
-        abaAlvo.style.display = 'block'; // Força o aparecimento
-    }
-
-    // 4. Destaca o botão clicado
-    if (el) el.classList.add('active');
-}
-    <script type="module" src="bg-remover.js"></script>
-</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/bundle.js"></script>
-
-<script type="module" src="auth.js"></script>
 <script src="estudio.js"></script>
 <script src="precificador.js"></script>
 <script src="pdv.js"></script>
 <script src="bg-remover.js"></script>
-    
+
+<script>
+    function tab(id, el) {
+        document.querySelectorAll('.aba').forEach(aba => {
+            aba.classList.remove('ativa');
+            aba.style.display = 'none';
+        });
+        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+
+        const abaAlvo = document.getElementById('aba-' + id);
+        if (abaAlvo) {
+            abaAlvo.classList.add('ativa');
+            abaAlvo.style.display = 'block';
+        }
+        if (el) el.classList.add('active');
+    }
+</script>
+
+<script type="module" src="auth.js"></script>
 
 </body>
 </html>
