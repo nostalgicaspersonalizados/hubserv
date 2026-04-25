@@ -1,38 +1,20 @@
-/* TESTE DE CONEXÃO: Se o fundo ficar vermelho, o CSS carregou */
-body { background-color: #0f172a !important; margin: 0; color: white; font-family: 'Inter', sans-serif; }
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Nostálgicas Pro - TESTE</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
 
-:root { --p: #6366f1; --d: #0f172a; --l: #f8fafc; --pro: #fbbf24; }
+    <div id="auth-overlay" class="overlay">
+        <div class="auth-card">
+            <h1>Nostálgicas Hub Pro</h1>
+            <p>Se você está vendo isso, o CSS carregou!</p>
+            <button id="btn-google" class="btn-p">ENTRAR COM GOOGLE</button>
+        </div>
+    </div>
 
-.overlay { 
-    position: fixed; 
-    inset: 0; 
-    background: #0f172a; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 1000; 
-    visibility: visible !important;
-}
-
-.auth-card { 
-    background: white; 
-    padding: 40px; 
-    border-radius: 16px; 
-    text-align: center; 
-    color: #333;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-.btn-p { 
-    background: #6366f1; 
-    color: white; 
-    border: none; 
-    padding: 15px 30px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    font-size: 16px;
-}
-
-/* Esconder o container do app enquanto não logar */
-.app-container { display: none; }
+    <script type="module" src="main.js"></script>
+</body>
+</html>
