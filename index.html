@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nostálgicas Hub Pro | SaaS</title>
+    <title>Nostálgicas Hub Pro</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <link rel="stylesheet" href="estilo.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
@@ -15,8 +16,7 @@
 
     <div id="auth-overlay" class="overlay">
         <div class="auth-card">
-            <h2>Nostálgicas Hub Pro</h2>
-            <p>Entre para gerenciar sua gráfica</p>
+            <h2 style="margin-bottom:20px; color:#0f172a">Nostálgicas Hub Pro</h2>
             <button id="btn-google" class="btn-p">Entrar com Google</button>
         </div>
     </div>
@@ -25,7 +25,7 @@
         <aside class="sidebar">
             <div class="brand">NOSTÁLGICAS <span>PRO</span></div>
             <div class="user-info">
-                <p id="user-name">Usuário</p>
+                <p id="user-name">Carregando...</p>
                 <span id="user-plan" class="badge">FREE</span>
             </div>
             <nav>
@@ -33,7 +33,6 @@
                 <button class="nav-item" onclick="tab('calc')">💰 Calculadora</button>
                 <button class="nav-item" onclick="tab('fotos')">🖼️ Gerador Fotos</button>
                 <button class="nav-item" onclick="tab('pdv')">🧾 PDV / Pedidos</button>
-                <button class="nav-item" onclick="tab('bg')">✂️ Remover Fundo</button>
                 <button class="nav-item logout" id="btn-logout">Sair</button>
             </nav>
         </aside>
@@ -44,20 +43,17 @@
                     <div class="stat-card"><h3>Pedidos</h3><h2 id="stat-pedidos">0</h2></div>
                     <div class="stat-card"><h3>Faturamento</h3><h2 id="stat-money">R$ 0,00</h2></div>
                 </div>
-                <div class="chart-container"><canvas id="vendasChart"></canvas></div>
             </section>
 
             <section id="tab-calc" class="tab">
                 <div class="card">
                     <div class="grid-form">
-                        <input type="number" id="c-unit" placeholder="Custo Unitário">
+                        <input type="number" id="c-unit" placeholder="Custo Material">
                         <input type="number" id="c-qtd" placeholder="Quantidade">
                         <input type="number" id="c-tempo" placeholder="Minutos">
-                        <input type="number" id="c-hora" placeholder="Custo/Hora">
-                        <input type="number" id="c-energia" placeholder="Energia/Extras">
-                        <input type="number" id="c-margem" placeholder="Margem %">
-                        <input type="number" id="c-taxa" placeholder="Taxa %">
-                        <button class="btn-p" id="btn-calc">Calcular</button>
+                        <input type="number" id="c-hora" placeholder="Custo/Hora" value="20">
+                        <input type="number" id="c-margem" placeholder="Margem %" value="100">
+                        <button class="btn-p" id="btn-calc">Calcular Preço</button>
                     </div>
                     <div class="res-box">
                         <h1 id="res-total">R$ 0,00</h1>
@@ -69,13 +65,12 @@
             <section id="tab-fotos" class="tab">
                 <div class="toolbar">
                     <select id="f-formato">
-                        <option value="p-padrao">Polaroid 9.5x10</option>
-                        <option value="p-instax">Instax 5.5x8</option>
-                        <option value="p-cabine">Cabine 5x15</option>
+                        <option value="p-padrao">Polaroid (9.5x10)</option>
+                        <option value="p-cabine">Cabine (5x15)</option>
                     </select>
                     <input type="file" id="f-in" multiple hidden>
                     <button class="btn-s" onclick="document.getElementById('f-in').click()">Subir Fotos</button>
-                    <button class="btn-p pro-feature" id="btn-pdf">Exportar PDF A4 (PRO)</button>
+                    <button class="btn-p" id="btn-pdf">Baixar PDF (PRO)</button>
                 </div>
                 <div id="canvas-a4" class="folha-a4"></div>
             </section>
