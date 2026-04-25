@@ -8,17 +8,91 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        body { background-color: #0f172a !important; color: white; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
-        .overlay { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .auth-card { background: white; padding: 40px; border-radius: 16px; text-align: center; color: #333; width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .auth-card input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn-p { background: #6366f1; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        .app-container { display: none; width: 100%; min-height: 100vh; }
-        .ativa { display: block !important; }
-        .tab { display: none; }
+        :root {
+            --bg-deep: #0f172a;
+            --bg-card: #1e293b;
+            --accent: #6366f1;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body { 
+            background-color: var(--bg-deep); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            min-height: 100vh;
+        }
+
+        /* TELA DE LOGIN */
+        .overlay { 
+            position: fixed; inset: 0; 
+            background: var(--bg-deep); 
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 9999; 
+        }
+        .auth-card { 
+            background: white; padding: 40px; border-radius: 20px; 
+            text-align: center; color: #333; width: 340px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .auth-card input { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            border: 1px solid #e2e8f0; border-radius: 10px; font-size: 16px;
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .app-container { display: none; width: 100%; flex-direction: row; }
+
+        /* SIDEBAR PROFISSIONAL */
+        .sidebar { 
+            width: 260px; background: var(--bg-card); 
+            padding: 30px 20px; display: flex; flex-direction: column;
+            border-right: 1px solid #334155; height: 100vh; position: fixed;
+        }
+        .brand { font-size: 22px; font-weight: 800; margin-bottom: 40px; color: var(--accent); }
+        .brand span { color: white; }
+        
+        .nav-item {
+            background: transparent; border: none; color: var(--text-dim);
+            padding: 14px 18px; border-radius: 12px; text-align: left;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; margin-bottom: 8px; display: flex; align-items: center; gap: 12px;
+        }
+        .nav-item:hover, .nav-item.active { 
+            background: var(--accent); color: white; 
+        }
+
+        /* CONTEÚDO */
+        .main-content { margin-left: 260px; padding: 40px; width: 100%; }
+        .tab { display: none; animation: fadeIn 0.4s ease; }
+        .tab.ativa { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CARDS E GRIDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: var(--bg-card); padding: 25px; border-radius: 16px; border: 1px solid #334155; }
+        .stat-card h3 { color: var(--text-dim); font-size: 14px; margin: 0; text-transform: uppercase; }
+        .stat-card h2 { font-size: 32px; margin: 10px 0 0 0; }
+
+        .btn-p { 
+            background: var(--accent); color: white; border: none; 
+            padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer;
+        }
+
+        /* ÁREA DE FOTOS (CANVAS) */
+        .folha-a4 {
+            background: white; width: 210mm; min-height: 297mm;
+            margin: 20px auto; padding: 10mm; display: grid;
+            grid-template-columns: repeat(auto-fill, 95mm); gap: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
     </style>
     <link rel="stylesheet" href="estilo.css">
 </head>
@@ -26,72 +100,86 @@
 
     <div id="auth-overlay" class="overlay">
         <div class="auth-card">
-            <h2 style="margin-bottom:10px">Nostálgicas Hub</h2>
+            <h2 style="margin-bottom: 5px;">Nostálgicas Hub</h2>
+            <p style="color: #64748b; margin-bottom: 25px;">Acesse sua oficina digital</p>
             <form id="login-form" onsubmit="return false;">
-                <input type="email" id="login-email" placeholder="E-mail" required autocomplete="username">
-                <input type="password" id="login-pass" placeholder="Senha" required autocomplete="current-password">
-                <button type="submit" id="btn-login" class="btn-p">ENTRAR</button>
+                <input type="email" id="login-email" placeholder="E-mail profissional" required>
+                <input type="password" id="login-pass" placeholder="Sua senha" required>
+                <button type="submit" id="btn-login" class="btn-p" style="width: 100%; margin-top: 15px;">ENTRAR NO SISTEMA</button>
             </form>
-            <p id="auth-error" style="color:red; font-size:12px; margin-top:10px"></p>
+            <p id="auth-error" style="color:#ef4444; font-size: 13px; margin-top: 15px;"></p>
         </div>
     </div>
 
     <div class="app-container" id="main-app">
-        <aside class="sidebar" style="width: 250px; background: #1e293b; padding: 20px; position: fixed; height: 100vh;">
-            <div class="brand" style="font-weight: 800; font-size: 20px; margin-bottom: 30px;">NOSTÁLGICAS <span style="color: #6366f1;">PRO</span></div>
-            <div class="user-info" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #334155;">
-                <p id="user-name" style="margin: 0; font-size: 14px;">Carregando...</p>
-                <span id="user-plan" style="background: #6366f1; font-size: 10px; padding: 2px 6px; border-radius: 4px;">FREE</span>
+        <aside class="sidebar">
+            <div class="brand">NOSTÁLGICAS <span>HUB</span></div>
+            
+            <div style="margin-bottom: 30px; padding: 15px; background: #0f172a; border-radius: 12px;">
+                <p id="user-name" style="margin: 0; font-size: 13px; font-weight: 700;">Usuário</p>
+                <span id="user-plan" style="color: var(--accent); font-size: 11px; font-weight: 800;">PLANO PROFISSIONAL</span>
             </div>
-            <nav style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="nav-item active" onclick="tab('dash')">📊 Dashboard</button>
-                <button class="nav-item" onclick="tab('calc')">💰 Calculadora</button>
-                <button class="nav-item" onclick="tab('fotos')">🖼️ Gerador Fotos</button>
-                <button class="nav-item logout" id="btn-logout" style="margin-top: 20px; color: #ef4444;">Sair</button>
+
+            <nav>
+                <button class="nav-item active" onclick="tab('dash')"><i class="fas fa-chart-line"></i> Dashboard</button>
+                <button class="nav-item" onclick="tab('calc')"><i class="fas fa-calculator"></i> Calculadora</button>
+                <button class="nav-item" onclick="tab('fotos')"><i class="fas fa-images"></i> Gerador de Fotos</button>
+                <button class="nav-item" onclick="tab('pdv')"><i class="fas fa-file-invoice-dollar"></i> PDV / Pedidos</button>
+                <button class="nav-item" style="margin-top: auto; color: #ef4444;" id="btn-logout"><i class="fas fa-sign-out-alt"></i> Sair</button>
             </nav>
         </aside>
 
-        <main class="main-content" style="margin-left: 250px; padding: 40px; width: calc(100% - 250px);">
+        <main class="main-content">
+            
             <section id="tab-dash" class="tab ativa">
-                <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="stat-card" style="background: #1e293b; padding: 20px; border-radius: 12px;">
-                        <h3>Pedidos</h3><h2 id="stat-pedidos">0</h2>
-                    </div>
-                    <div class="stat-card" style="background: #1e293b; padding: 20px; border-radius: 12px;">
-                        <h3>Faturamento</h3><h2 id="stat-money">R$ 0,00</h2>
-                    </div>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>Pedidos Realizados</h3><h2 id="stat-pedidos">0</h2></div>
+                    <div class="stat-card"><h3>Faturamento Mensal</h3><h2 id="stat-money">R$ 0,00</h2></div>
                 </div>
-            </section>
+                </section>
 
             <section id="tab-calc" class="tab">
-                <div class="card" style="background: #1e293b; padding: 30px; border-radius: 12px;">
-                    <div class="grid-form" style="display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
-                        <input type="number" id="c-unit" placeholder="Custo Material">
-                        <input type="number" id="c-qtd" placeholder="Quantidade">
-                        <input type="number" id="c-tempo" placeholder="Minutos de Produção">
-                        <input type="number" id="c-hora" placeholder="Custo/Hora" value="20">
-                        <input type="number" id="c-margem" placeholder="Margem %" value="100">
-                        <button class="btn-p" id="btn-calc">Calcular Preço</button>
+                <div style="max-width: 600px; background: var(--bg-card); padding: 30px; border-radius: 20px;">
+                    <h2 style="margin-top: 0;">Precificação Inteligente</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div><label>Custo Matéria Prima</label><input type="number" id="c-unit" class="auth-card" style="width: 100%; color: white; background: #0f172a; border: none; padding: 10px;"></div>
+                        <div><label>Quantidade</label><input type="number" id="c-qtd" value="1" style="width: 100%; color: white; background: #0f172a; border: none; padding: 10px; border-radius: 8px;"></div>
+                        <div><label>Minutos Produção</label><input type="number" id="c-tempo" value="10" style="width: 100%; color: white; background: #0f172a; border: none; padding: 10px; border-radius: 8px;"></div>
+                        <div><label>Margem Lucro %</label><input type="number" id="c-margem" value="100" style="width: 100%; color: white; background: #0f172a; border: none; padding: 10px; border-radius: 8px;"></div>
                     </div>
-                    <div class="res-box" style="margin-top: 30px;">
-                        <h1 id="res-total">R$ 0,00</h1>
-                        <p id="res-lucro" style="color: #10b981;">Lucro: R$ 0,00</p>
+                    <button id="btn-calc" class="btn-p" style="width: 100%; margin-top: 20px;">GERAR VALOR DE VENDA</button>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: #0f172a; border-radius: 12px; text-align: center;">
+                        <span style="color: var(--text-dim);">Preço Sugerido</span>
+                        <h1 id="res-total" style="font-size: 48px; margin: 5px 0;">R$ 0,00</h1>
+                        <p id="res-lucro" style="color: #10b981; font-weight: 700;"></p>
                     </div>
                 </div>
             </section>
 
             <section id="tab-fotos" class="tab">
-                <div class="toolbar" style="margin-bottom: 20px; display: flex; gap: 10px;">
-                    <select id="f-formato">
-                        <option value="p-padrao">Polaroid (9.5x10)</option>
-                        <option value="p-cabine">Cabine (5x15)</option>
-                    </select>
-                    <input type="file" id="f-in" multiple hidden>
-                    <button class="btn-p" onclick="document.getElementById('f-in').click()">Subir Fotos</button>
-                    <button class="btn-p" id="btn-pdf" style="background: #fbbf24; color: #000;">Baixar PDF (PRO)</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="display: flex; gap: 10px;">
+                        <select id="f-formato" style="padding: 10px; border-radius: 8px; background: var(--bg-card); color: white; border: 1px solid #334155;">
+                            <option value="p-padrao">Polaroid (9.5 x 10)</option>
+                            <option value="p-cabine">Cabine (5 x 15)</option>
+                        </select>
+                        <button class="btn-p" onclick="document.getElementById('f-in').click()"><i class="fas fa-upload"></i> Subir Fotos</button>
+                        <input type="file" id="f-in" multiple hidden>
+                    </div>
+                    <button id="btn-pdf" class="btn-p" style="background: #fbbf24; color: #000;"><i class="fas fa-file-pdf"></i> Baixar PDF para Impressão</button>
                 </div>
-                <div id="canvas-a4" style="background: white; width: 210mm; min-height: 297mm; padding: 10mm; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                <div id="canvas-a4" class="folha-a4">
+                    </div>
             </section>
+
+            <section id="tab-pdv" class="tab">
+                <div class="stat-card">
+                    <h2>Registrar Venda / Pedido</h2>
+                    <p style="color: var(--text-dim);">Em breve: Controle de estoque integrado.</p>
+                </div>
+            </section>
+
         </main>
     </div>
 
