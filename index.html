@@ -203,11 +203,29 @@
 
 <script>
     function tab(id, el) {
-        document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById('aba-' + id).classList.add('ativa');
-        el.classList.add('active');
+    console.log("Trocando para a aba:", id); // Isso ajuda a ver se o clique funciona
+
+    // 1. Esconde TODAS as abas de uma vez
+    const todasAbas = document.querySelectorAll('.aba');
+    todasAbas.forEach(aba => {
+        aba.classList.remove('ativa');
+        aba.style.display = 'none'; // Força o desaparecimento
+    });
+
+    // 2. Remove o destaque de todos os botões do menu
+    const todosBotoes = document.querySelectorAll('.nav-item');
+    todosBotoes.forEach(btn => btn.classList.remove('active'));
+
+    // 3. Mostra APENAS a aba que você clicou
+    const abaAlvo = document.getElementById('aba-' + id);
+    if (abaAlvo) {
+        abaAlvo.classList.add('ativa');
+        abaAlvo.style.display = 'block'; // Força o aparecimento
     }
+
+    // 4. Destaca o botão clicado
+    if (el) el.classList.add('active');
+}
     <script type="module" src="bg-remover.js"></script>
 </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
