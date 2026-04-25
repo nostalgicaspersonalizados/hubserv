@@ -1,28 +1,33 @@
-:root { --p: #6366f1; --d: #0f172a; --bg: #f8fafc; }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-body { display: flex; height: 100vh; background: var(--bg); }
+#preview-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
-.sidebar { width: 240px; background: var(--d); color: white; padding: 25px; }
-.brand { font-weight: 900; font-size: 20px; color: var(--p); margin-bottom: 30px; text-align: center; }
-.nav-btn { width: 100%; padding: 12px; border: none; background: none; color: #94a3b8; text-align: left; cursor: pointer; font-weight: 600; }
-.nav-btn.active { background: var(--p); color: white; border-radius: 8px; }
+.foto {
+    background: white;
+    padding: 10px;
+}
 
-.content { flex: 1; padding: 30px; overflow-y: auto; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-/* FOTOS BLINDADAS */
-#print-area { background: #ddd; padding: 40px; display: flex; justify-content: center; }
-#molde { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-.p-padrao { width: 250px; height: 280px; }
-.p-instax { width: 160px; height: 240px; }
-.p-cabine { width: 140px; height: 450px; display: flex; flex-direction: column; gap: 5px; padding: 10px !important; }
+.p-padrao { width: 180px; height: 200px; }
+.p-instax { width: 110px; height: 160px; }
+.p-mini   { width: 130px; height: 180px; }
 
-.photo-box { width: 100%; height: 100%; overflow: hidden; background: #eee; }
-#molde.p-cabine .photo-box { height: 32%; }
-.photo-box img { width: 100%; height: 100%; object-fit: cover !important; } /* AQUI A FOTO É TRAVADA */
+.cabine {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: white;
+    padding: 5px;
+}
 
-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; }
-.btn-p { background: var(--p); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.cabine-foto {
+    width: 100px;
+    height: 140px;
+}
