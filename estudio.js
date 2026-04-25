@@ -1,16 +1,15 @@
 /**
  * NOSTÁLGICAS HUB - Módulo do Estúdio (estudio.js)
- * Focado em: Performance, Ajuste Fluido e Exportação
+ * Ajustado para funcionar com o sistema de abas e login.
  */
 
-// 1. ESTADO GLOBAL DO MÓDULO (Protegido dentro do arquivo)
-let photoRegistry = {}; // Guarda {x, y, s, src} de cada foto por ID
-let curId = null;       // ID da foto sendo editada no momento
-let cropState = { x: 0, y: 0, s: 0.8 }; // Estado temporário do modal
+// 1. ESTADO GLOBAL DO MÓDULO
+let photoRegistry = {}; 
+let curId = null;       
+let cropState = { x: 0, y: 0, s: 0.8 }; 
 let isDragging = false;
 let startPos = { x: 0, y: 0 };
 
-// --- CONFIGURAÇÕES DE MOLDURAS ---
 const LIMITES = { padrao: 4, mini: 6, instax: 9, trio: 9 };
 
 // 2. INICIALIZAÇÃO DE EVENTOS
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(fileIn) fileIn.onchange = (e) => handleFiles(e.target);
     if(zoomCtrl) zoomCtrl.oninput = (e) => handleZoom(e.target.value);
     
-    // Eventos de Arraste (Pointer Events funcionam em Mouse e Touch)
     if(cropArea) {
         cropArea.onpointerdown = startDrag;
         cropArea.onpointermove = doDrag;
@@ -33,6 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 3. LOGICA DE UPLOAD E GRID
 window.handleFiles = (input) => {
+    // Verifica se há arquivos selecionados
+    if (!input.files.length) return;
+
     const mod = document.getElementById('p-modelo').value;
     const files = Array.from(input.files);
     const cont = document.getElementById('p-folhas');
@@ -42,7 +43,6 @@ window.handleFiles = (input) => {
         reader.onload = (e) => {
             let folha = cont.lastElementChild;
             
-            // Verifica se precisa de uma nova folha A4
             if (!folha || isFolhaCheia(folha, mod)) {
                 folha = document.createElement('div');
                 folha.className = `folha-a4 g-${mod}`;
@@ -70,7 +70,7 @@ function addStd(folha, src, mod) {
     const id = 'img_' + Math.random().toString(36).substr(2, 9);
     const card = document.createElement('div');
     card.className = `polaroid f-${mod}`;
-    card.innerHTML = `<div class="foto-box"><img src="${src}" id="${id}"></div>`;
+    card.innerHTML = `<div class="foto-box"><img src="${src}" id="${id}" style="pointer-events: none;"></div>`;
     card.onclick = () => openEditor(id);
     folha.appendChild(card);
     
@@ -90,15 +90,19 @@ function addTrio(folha, src) {
     }
 
     const boxVazio = Array.from(ultimaTira.querySelectorAll('.trio-img-box')).find(b => b.innerHTML === "");
-    boxVazio.innerHTML = `<img src="${src}" id="${id}">`;
-    boxVazio.onclick = (e) => { e.stopPropagation(); openEditor(id); };
-
-    photoRegistry[id] = { x: 0, y: 0, s: 0.8, src: src };
-    updateDOM(id);
+    if (boxVazio) {
+        boxVazio.innerHTML = `<img src="${src}" id="${id}" style="pointer-events: none;">`;
+        boxVazio.onclick = (e) => { e.stopPropagation(); openEditor(id); };
+        photoRegistry[id] = { x: 0, y: 0, s: 0.8, src: src };
+        updateDOM(id);
+    }
 }
 
-// 4. MOTOR DO EDITOR (O CORAÇÃO DO AJUSTE)
+// 4. MOTOR DO EDITOR
 window.openEditor = (id) => {
+    // Só abre se estiver na aba de estúdio (prevenção de bug)
+    if (!document.getElementById('aba-prod').classList.contains('ativa')) return;
+
     curId = id;
     cropState = { ...photoRegistry[id] };
     
@@ -112,11 +116,14 @@ window.openEditor = (id) => {
 
 window.closeEditor = () => {
     document.getElementById('editor-modal').style.display = 'none';
+    curId = null; // Limpa o ID atual
 };
 
 window.saveCrop = () => {
-    photoRegistry[curId] = { ...cropState };
-    updateDOM(curId);
+    if (curId) {
+        photoRegistry[curId] = { ...cropState };
+        updateDOM(curId);
+    }
     closeEditor();
 };
 
@@ -125,7 +132,7 @@ function handleZoom(val) {
     refreshPreview();
 }
 
-// Drag & Drop Lógica
+// Lógica de Arrastar
 function startDrag(e) {
     isDragging = true;
     this.setPointerCapture(e.pointerId);
@@ -144,13 +151,15 @@ function endDrag() { isDragging = false; }
 
 function refreshPreview() {
     const img = document.getElementById('crop-img');
-    img.style.transform = `translate(calc(-50% + ${cropState.x}px), calc(-50% + ${cropState.y}px)) scale(${cropState.s})`;
+    if (img) {
+        img.style.transform = `translate(calc(-50% + ${cropState.x}px), calc(-50% + ${cropState.y}px)) scale(${cropState.s})`;
+    }
 }
 
 function updateDOM(id) {
     const img = document.getElementById(id);
     const data = photoRegistry[id];
-    if (img) {
+    if (img && data) {
         img.style.transform = `translate(calc(-50% + ${data.x}px), calc(-50% + ${data.y}px)) scale(${data.s})`;
     }
 }
@@ -158,17 +167,30 @@ function updateDOM(id) {
 // 5. EXPORTAÇÃO
 window.exportarPDF = async () => {
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
     const folhas = document.querySelectorAll('.folha-a4');
 
     if (folhas.length === 0) return alert("Adicione fotos primeiro.");
 
-    for (let i = 0; i < folhas.length; i++) {
-        if (i > 0) pdf.addPage();
-        const canvas = await html2canvas(folhas[i], { scale: 3, useCORS: true });
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+    const btn = event.target;
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ Gerando...";
+    btn.disabled = true;
+
+    try {
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        for (let i = 0; i < folhas.length; i++) {
+            if (i > 0) pdf.addPage();
+            const canvas = await html2canvas(folhas[i], { scale: 2, useCORS: true });
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 210, 297);
+        }
+        pdf.save('Nostalgicas_Producao.pdf');
+    } catch (err) {
+        console.error(err);
+        alert("Erro ao gerar PDF.");
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
     }
-    pdf.save('Nostalgicas_Producao.pdf');
 };
 
 window.limparEstudio = () => {
