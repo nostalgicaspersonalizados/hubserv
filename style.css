@@ -1,86 +1,119 @@
+/* --- CONFIGURAÇÕES GERAIS --- */
 :root {
     --primary: #6366f1;
     --dark: #1e293b;
     --bg: #f8fafc;
     --card: #ffffff;
+    --sidebar-width: 260px;
 }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { 
     font-family: 'Inter', sans-serif; 
     background: var(--bg); 
     display: flex; 
-    margin: 0; 
     height: 100vh; 
+    overflow: hidden;
 }
 
-/* Sidebar Profissional */
+/* --- TELA DE LOGIN (ESTILO) --- */
+#auth-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--dark);
+    display: flex; /* Começa visível */
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+/* --- ESTRUTURA DO HUB (ESCONDIDA POR PADRÃO) --- */
 .sidebar { 
-    width: 260px; 
-    background: var(--dark); 
+    display: none; /* Só aparece após login */
+    width: var(--sidebar-width); 
+    background: #0f172a; 
     color: white; 
     padding: 30px 20px; 
-    display: flex; 
     flex-direction: column; 
-    gap: 10px; 
+    gap: 8px; 
 }
 
+.main { 
+    display: none; /* Só aparece após login */
+    flex: 1; 
+    padding: 30px; 
+    overflow-y: auto; 
+    background: var(--bg);
+}
+
+/* --- QUANDO LOGADO (O JS ADICIONA ESTA CLASSE) --- */
+body.logged-in .sidebar { display: flex; }
+body.logged-in .main { display: block; }
+body.logged-in #auth-screen { display: none; }
+
+/* --- ABAS E NAVEGAÇÃO --- */
+.aba { display: none; }
+.aba.ativa { display: block; }
+
 .nav-item { 
-    padding: 12px 15px; 
-    border-radius: 8px; 
+    padding: 14px 18px; 
+    border-radius: 10px; 
     border: none; 
     background: transparent; 
     color: #94a3b8; 
     text-align: left; 
     cursor: pointer; 
-    transition: 0.3s; 
+    font-size: 14px;
+    transition: 0.2s; 
 }
 
-.nav-item.active { background: var(--primary); color: white; }
+.nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+.nav-item.active { background: var(--primary); color: white; font-weight: bold; }
 
-/* Main Content */
-.main { flex: 1; padding: 40px; overflow-y: auto; }
-.aba { display: none; }
-.aba.ativa { display: block; }
-
+/* --- CARDS E ELEMENTOS --- */
 .card { 
     background: var(--card); 
     padding: 25px; 
     border-radius: 16px; 
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
-}
-
-/* ESCONDER EDITOR NAS OUTRAS ABAS */
-#editor-modal { 
-    display: none; 
-    position: fixed; 
-    inset: 0; 
-    background: rgba(0,0,0,0.85); 
-    z-index: 1000; 
-    align-items: center; 
-    justify-content: center; 
-}
-
-/* Inputs e Botões */
-input, select { 
-    width: 100%; 
-    padding: 10px; 
-    border: 1px solid #e2e8f0; 
-    border-radius: 8px; 
-    margin-top: 5px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    margin-bottom: 20px;
 }
 
 .btn { 
     background: var(--primary); 
     color: white; 
-    padding: 12px; 
+    padding: 12px 20px; 
     border-radius: 8px; 
     border: none; 
     cursor: pointer; 
     font-weight: 600; 
+    transition: 0.2s;
 }
 
-.btn:hover { opacity: 0.9; }
-/* Efeito de Loading */
+.btn:active { transform: scale(0.98); }
+
+/* --- EDITOR DE FOTOS E MODAL --- */
+#editor-modal { 
+    display: none; 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.9); 
+    z-index: 11000; 
+    align-items: center; 
+    justify-content: center; 
+}
+
+#crop-area { 
+    width: 500px; 
+    height: 500px; 
+    background: #000; 
+    position: relative; 
+    overflow: hidden; 
+    border-radius: 8px;
+}
+
+/* --- SPINNER DE LOADING (REMOVEDOR) --- */
 .spinner {
     width: 40px;
     height: 40px;
@@ -88,10 +121,6 @@ input, select {
     border-top: 4px solid var(--primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin: 10px auto;
+    margin: 20px auto;
 }
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
